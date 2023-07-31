@@ -1,82 +1,77 @@
-document.getElementById('inputFile').addEventListener('change', function() {
-    var previewContainer = document.getElementById('previewContainer');
-    previewContainer.innerHTML = '';
+// Fonction pour redimensionner une image
+function redimensionnerImage(image, taille) {
+  var canvas = document.createElement("canvas");
+  var context = canvas.getContext("2d");
+  canvas.width = taille;
+  canvas.height = taille;
+  context.drawImage(image, 0, 0, taille, taille);
+  return canvas.toDataURL("image/png");
+}
 
-    var inputFiles = this.files;
-    for (var i = 0; i < inputFiles.length; i++) {
-        var inputFile = inputFiles[i];
-        var reader = new FileReader();
+// Liste pour stocker les images redimensionnées
+var imagesRedimensionnees = [];
 
-        reader.onload = function (e) {
-            var img = document.createElement('img');
-            img.src = e.target.result;
-            previewContainer.appendChild(img);
-        };
+// Fonction pour gérer le chargement des fichiers
+function gererChargementFichiers(event) {
+  imagesRedimensionnees = []; // Réinitialiser la liste des images redimensionnées
 
-        reader.readAsDataURL(inputFile);
+  var files = event.target.files;
+  var previewContainer = document.getElementById("previewContainer");
+  previewContainer.innerHTML = ""; // Effacer tout contenu précédent
+
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var reader = new FileReader();
+
+    // Vérifier si le fichier est une image PNG
+    if (file.type === "image/png") {
+      reader.onload = function (event) {
+        var image = new Image();
+        image.src = event.target.result;
+
+        // Redimensionner l'image aux tailles requises
+        var image_72 = redimensionnerImage(image, 72);
+        var image_36 = redimensionnerImage(image, 36);
+        var image_18 = redimensionnerImage(image, 18);
+
+        // Afficher les images redimensionnées
+        var previewImage = document.createElement("img");
+        previewImage.src = image_72;
+        previewContainer.appendChild(previewImage);
+
+        imagesRedimensionnees.push({ dataUrl: image_72 });
+        imagesRedimensionnees.push({ dataUrl: image_36 });
+        imagesRedimensionnees.push({ dataUrl: image_18 });
+      };
+
+      reader.readAsDataURL(file);
+    } else {
+      alert("Le fichier " + file.name + " n'est pas une image PNG valide.");
     }
-});
+  }
+}
 
-document.getElementById('resizeButton').addEventListener('click', function () {
-    var inputFiles = document.getElementById('inputFile').files;
-    var selectedOption = document.querySelector('input[name="resizeOption"]:checked').value;
+// Fonction pour télécharger les images redimensionnées sous forme de ZIP
+function telechargerZip() {
+  if (imagesRedimensionnees.length === 0) {
+    alert("Aucune image redimensionnée à télécharger.");
+    return;
+  }
 
-    var resizeOptions;
-    if (selectedOption === 'twitch') {
-        resizeOptions = [72, 36, 18];
-    } else if (selectedOption === 'discord') {
-        resizeOptions = [256];
-    } else if (selectedOption === 'chaine') {
-        resizeOptions = [28, 56, 112];
-    }
+  var zip = new JSZip();
 
-    if (inputFiles.length > 0) {
-        var zip = new JSZip();
-        var filePromises = [];
+  imagesRedimensionnees.forEach((image, index) => {
+    var nomFichier = "image_" + (index + 1) + ".png";
+    zip.file(nomFichier, image.dataUrl, { base64: true });
+  });
 
-        for (var j = 0; j < inputFiles.length; j++) {
-            var inputFile = inputFiles[j];
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var img = new Image();
-                img.src = e.target.result;
-                img.onload = function () {
-                    var canvas = document.createElement('canvas');
-                    var ctx = canvas.getContext('2d');
+  zip.generateAsync({ type: "blob" }).then(function (contenu) {
+    saveAs(contenu, "images_redimensionnees.zip");
+  });
+}
 
-                    for (var i = 0; i < resizeOptions.length; i++) {
-                        var resizeOption = resizeOptions[i];
-                        canvas.width = resizeOption;
-                        canvas.height = resizeOption;
-                        ctx.clearRect(0, 0, resizeOption, resizeOption);
-                        ctx.drawImage(img, 0, 0, resizeOption, resizeOption);
-                        var resizedData = canvas.toDataURL('image/png');
+// Écouter l'événement de chargement de fichiers
+document.getElementById("inputFile").addEventListener("change", gererChargementFichiers);
 
-                        // Ajouter les images redimensionnées dans le fichier ZIP
-                        var imgFileName = inputFile.name + "_" + resizeOption + "x" + resizeOption + ".png";
-                        zip.file(imgFileName, resizedData.substr(resizedData.indexOf(',') + 1), { base64: true });
-                    }
-                };
-            };
-
-            filePromises.push(new Promise(function(resolve) {
-                reader.readAsDataURL(inputFile);
-                reader.onloadend = resolve;
-            }));
-        }
-
-        Promise.all(filePromises).then(function() {
-            // Activer le bouton de téléchargement et définir l'action de téléchargement
-            var downloadButton = document.getElementById('downloadButton');
-            downloadButton.disabled = false;
-            downloadButton.addEventListener('click', function() {
-                zip.generateAsync({ type: "blob" }).then(function (content) {
-                    var link = document.createElement("a");
-                    link.href = URL.createObjectURL(content);
-                    link.download = "images.zip";
-                    link.click();
-                });
-            });
-        });
-    }
-});
+// Écouter l'événement du bouton "Redimensionner"
+document.getElementById("resizeButton").addEventListener("click", telechargerZip);
