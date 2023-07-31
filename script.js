@@ -102,4 +102,4 @@ function telechargerZip() {
 document.getElementById("inputFile").addEventListener("change", gererChargementFichiers);
 
 // Écouter l'événement du bouton "Redimensionner"
-document.getElementById("resizeButton").addEventListener("click", telechargerZip);
+document.getElementById("downloadButton").addEventListener("click", telechargerZip);
