@@ -35,13 +35,30 @@ function gererChargementFichiers(event) {
         var image_18 = redimensionnerImage(image, 18);
 
         // Afficher les images redimensionnées
-        var previewImage = document.createElement("img");
-        previewImage.src = image_72;
-        previewContainer.appendChild(previewImage);
+        var previewImage_72 = document.createElement("img");
+        previewImage_72.src = image_72;
+        previewImage_72.style.maxWidth = "100px";
+        previewImage_72.style.maxHeight = "100px";
+        previewContainer.appendChild(previewImage_72);
+
+        var previewImage_36 = document.createElement("img");
+        previewImage_36.src = image_36;
+        previewImage_36.style.maxWidth = "100px";
+        previewImage_36.style.maxHeight = "100px";
+        previewContainer.appendChild(previewImage_36);
+
+        var previewImage_18 = document.createElement("img");
+        previewImage_18.src = image_18;
+        previewImage_18.style.maxWidth = "100px";
+        previewImage_18.style.maxHeight = "100px";
+        previewContainer.appendChild(previewImage_18);
 
         imagesRedimensionnees.push({ dataUrl: image_72 });
         imagesRedimensionnees.push({ dataUrl: image_36 });
         imagesRedimensionnees.push({ dataUrl: image_18 });
+
+        // Activer le bouton "Télécharger ZIP" une fois que les images sont chargées
+        document.getElementById("downloadButton").disabled = false;
       };
 
       reader.readAsDataURL(file);
@@ -62,7 +79,7 @@ function telechargerZip() {
 
   imagesRedimensionnees.forEach((image, index) => {
     var nomFichier = "image_" + (index + 1) + ".png";
-    zip.file(nomFichier, image.dataUrl, { base64: true });
+    zip.file(nomFichier, image.dataUrl.split("base64,")[1], { base64: true });
   });
 
   zip.generateAsync({ type: "blob" }).then(function (contenu) {
