@@ -48,8 +48,9 @@ document.getElementById('resizeButton').addEventListener('click', function () {
 
         Promise.all(filePromises).then(function() {
             // Activer le bouton de téléchargement et définir l'action de téléchargement
-            document.getElementById('downloadButton').disabled = false;
-            document.getElementById('downloadButton').addEventListener('click', function() {
+            var downloadButton = document.getElementById('downloadButton');
+            downloadButton.disabled = false;
+            downloadButton.addEventListener('click', function() {
                 zip.generateAsync({ type: "blob" }).then(function (content) {
                     var link = document.createElement("a");
                     link.href = URL.createObjectURL(content);
