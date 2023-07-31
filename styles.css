@@ -37,14 +37,13 @@ label {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: #9146FF;
     transition: background-color 0.2s ease-in-out;
-    color: #000;
+    color: #fff;
 }
 
 label:hover {
-    background-color: #9b59b6;
-    color: #fff;
+    background-color: #7d2eb3;
 }
 
 input[type="radio"] {
@@ -52,8 +51,7 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked + label {
-    background-color: #9b59b6;
-    color: #fff;
+    background-color: #7d2eb3;
 }
 
 button {
@@ -61,7 +59,7 @@ button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    background-color: #9b59b6;
+    background-color: #9146FF;
     color: #fff;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
@@ -73,7 +71,7 @@ button:disabled {
 }
 
 button:hover {
-    background-color: #8e44ad;
+    background-color: #7d2eb3;
 }
 
 #previewContainer {
