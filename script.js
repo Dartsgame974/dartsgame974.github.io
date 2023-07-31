@@ -48,6 +48,18 @@ function gererChargementFichiers(event) {
             previewImage_72.style.maxWidth = "100px";
             previewImage_72.style.maxHeight = "100px";
             previewContainer.appendChild(previewImage_72);
+
+            var previewImage_36 = document.createElement("img");
+            previewImage_36.src = image.dataUrl_36;
+            previewImage_36.style.maxWidth = "100px";
+            previewImage_36.style.maxHeight = "100px";
+            previewContainer.appendChild(previewImage_36);
+
+            var previewImage_18 = document.createElement("img");
+            previewImage_18.src = image.dataUrl_18;
+            previewImage_18.style.maxWidth = "100px";
+            previewImage_18.style.maxHeight = "100px";
+            previewContainer.appendChild(previewImage_18);
           });
 
           document.getElementById("downloadButton").disabled = false;
@@ -90,4 +102,4 @@ function telechargerZip() {
 document.getElementById("inputFile").addEventListener("change", gererChargementFichiers);
 
 // Écouter l'événement du bouton "Redimensionner"
-document.getElementById("resizeButton").addEventListener("click", telechargerZip);
+document.getElementById("downloadButton").addEventListener("click", telechargerZip);
