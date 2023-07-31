@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>Redimensionnement d'images</h1>
-    <input type="file" id="inputFile">
+      <input type="file" id="inputFile" multiple>
     
     <div>
         <input type="radio" id="twitchOption" name="resizeOption" value="twitch">
@@ -22,8 +22,10 @@
     </div>
     
     <button id="resizeButton">Redimensionner</button>
+    <button id="downloadButton" disabled>Télécharger ZIP</button>
     <div id="outputContainer"></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
