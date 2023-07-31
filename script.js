@@ -8,10 +8,19 @@ function redimensionnerImage(image, taille) {
   return canvas.toDataURL("image/png");
 }
 
+// Fonction pour afficher un message de statut
+function afficherStatutMessage(message) {
+  var statutContainer = document.getElementById("statutContainer");
+  statutContainer.textContent = message;
+}
+
 // Fonction pour gérer le chargement des fichiers
 function gererChargementFichiers(event) {
   var files = event.target.files;
   var zip = new JSZip();
+
+  // Réinitialiser le statut des images
+  afficherStatutMessage("");
 
   for (var i = 0; i < files.length; i++) {
     var file = files[i];
@@ -37,6 +46,7 @@ function gererChargementFichiers(event) {
         // Vérifier si toutes les images ont été ajoutées au fichier ZIP avant d'activer le bouton "Télécharger ZIP"
         if (i === files.length - 1) {
           document.getElementById("downloadButton").disabled = false;
+          afficherStatutMessage("Toutes les images ont été redimensionnées.");
         }
       };
 
