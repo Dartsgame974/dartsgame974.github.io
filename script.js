@@ -1,3 +1,22 @@
+document.getElementById('inputFile').addEventListener('change', function() {
+    var previewContainer = document.getElementById('previewContainer');
+    previewContainer.innerHTML = '';
+
+    var inputFiles = this.files;
+    for (var i = 0; i < inputFiles.length; i++) {
+        var inputFile = inputFiles[i];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            var img = document.createElement('img');
+            img.src = e.target.result;
+            previewContainer.appendChild(img);
+        };
+
+        reader.readAsDataURL(inputFile);
+    }
+});
+
 document.getElementById('resizeButton').addEventListener('click', function () {
     var inputFiles = document.getElementById('inputFile').files;
     var selectedOption = document.querySelector('input[name="resizeOption"]:checked').value;
