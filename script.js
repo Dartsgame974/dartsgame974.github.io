@@ -8,12 +8,12 @@ function redimensionnerImage(image, taille) {
   return canvas.toDataURL("image/png");
 }
 
-// Liste pour stocker les images redimensionnées
-var imagesRedimensionnees = [];
+// Liste pour stocker les images chargées
+var imagesChargees = [];
 
 // Fonction pour gérer le chargement des fichiers
 function gererChargementFichiers(event) {
-  imagesRedimensionnees = []; // Réinitialiser la liste des images redimensionnées
+  imagesChargees = []; // Réinitialiser la liste des images chargées
 
   var files = event.target.files;
   var previewContainer = document.getElementById("previewContainer");
@@ -28,36 +28,30 @@ function gererChargementFichiers(event) {
       reader.onload = function (event) {
         var image = new Image();
         image.src = event.target.result;
-
+        
         // Redimensionner l'image aux tailles requises
         var image_72 = redimensionnerImage(image, 72);
         var image_36 = redimensionnerImage(image, 36);
         var image_18 = redimensionnerImage(image, 18);
-
-        // Afficher les images redimensionnées
-        var previewImage_72 = document.createElement("img");
-        previewImage_72.src = image_72;
-        previewImage_72.style.maxWidth = "100px";
-        previewImage_72.style.maxHeight = "100px";
-        previewContainer.appendChild(previewImage_72);
-
-        var previewImage_36 = document.createElement("img");
-        previewImage_36.src = image_36;
-        previewImage_36.style.maxWidth = "100px";
-        previewImage_36.style.maxHeight = "100px";
-        previewContainer.appendChild(previewImage_36);
-
-        var previewImage_18 = document.createElement("img");
-        previewImage_18.src = image_18;
-        previewImage_18.style.maxWidth = "100px";
-        previewImage_18.style.maxHeight = "100px";
-        previewContainer.appendChild(previewImage_18);
-
-        imagesRedimensionnees.push({ dataUrl: image_72 });
-        imagesRedimensionnees.push({ dataUrl: image_36 });
-        imagesRedimensionnees.push({ dataUrl: image_18 });
+        
+        imagesChargees.push({ dataUrl_72: image_72 });
+        imagesChargees.push({ dataUrl_36: image_36 });
+        imagesChargees.push({ dataUrl_18: image_18 });
+        
+        // Vérifier si toutes les images ont été chargées avant d'afficher l'aperçu et activer le bouton "Télécharger ZIP"
+        if (imagesChargees.length === files.length * 3) {
+          imagesChargees.forEach((image, index) => {
+            var previewImage = document.createElement("img");
+            previewImage.src = image.dataUrl_72;
+            previewImage.style.maxWidth = "100px";
+            previewImage.style.maxHeight = "100px";
+            previewContainer.appendChild(previewImage);
+          });
+          
+          document.getElementById("downloadButton").disabled = false;
+        }
       };
-
+      
       reader.readAsDataURL(file);
     } else {
       alert("Le fichier " + file.name + " n'est pas une image PNG valide.");
@@ -67,16 +61,22 @@ function gererChargementFichiers(event) {
 
 // Fonction pour télécharger les images redimensionnées sous forme de ZIP
 function telechargerZip() {
-  if (imagesRedimensionnees.length === 0) {
-    alert("Aucune image redimensionnée à télécharger.");
+  if (imagesChargees.length === 0) {
+    alert("Aucune image chargée.");
     return;
   }
 
   var zip = new JSZip();
 
-  imagesRedimensionnees.forEach((image, index) => {
-    var nomFichier = "image_" + (index + 1) + ".png";
-    zip.file(nomFichier, image.dataUrl.split("base64,")[1], { base64: true });
+  imagesChargees.forEach((image, index) => {
+    var nomFichier_72 = "image_" + (index + 1) + "_72.png";
+    zip.file(nomFichier_72, image.dataUrl_72.split("base64,")[1], { base64: true });
+
+    var nomFichier_36 = "image_" + (index + 1) + "_36.png";
+    zip.file(nomFichier_36, image.dataUrl_36.split("base64,")[1], { base64: true });
+
+    var nomFichier_18 = "image_" + (index + 1) + "_18.png";
+    zip.file(nomFichier_18, image.dataUrl_18.split("base64,")[1], { base64: true });
   });
 
   zip.generateAsync({ type: "blob" }).then(function (contenu) {
