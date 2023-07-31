@@ -28,30 +28,32 @@ function gererChargementFichiers(event) {
       reader.onload = function (event) {
         var image = new Image();
         image.src = event.target.result;
-        
+
         // Redimensionner l'image aux tailles requises
         var image_72 = redimensionnerImage(image, 72);
         var image_36 = redimensionnerImage(image, 36);
         var image_18 = redimensionnerImage(image, 18);
-        
-        imagesChargees.push({ dataUrl_72: image_72 });
-        imagesChargees.push({ dataUrl_36: image_36 });
-        imagesChargees.push({ dataUrl_18: image_18 });
-        
+
+        imagesChargees.push({
+          dataUrl_72: image_72,
+          dataUrl_36: image_36,
+          dataUrl_18: image_18,
+        });
+
         // Vérifier si toutes les images ont été chargées avant d'afficher l'aperçu et activer le bouton "Télécharger ZIP"
-        if (imagesChargees.length === files.length * 3) {
+        if (imagesChargees.length === files.length) {
           imagesChargees.forEach((image, index) => {
-            var previewImage = document.createElement("img");
-            previewImage.src = image.dataUrl_72;
-            previewImage.style.maxWidth = "100px";
-            previewImage.style.maxHeight = "100px";
-            previewContainer.appendChild(previewImage);
+            var previewImage_72 = document.createElement("img");
+            previewImage_72.src = image.dataUrl_72;
+            previewImage_72.style.maxWidth = "100px";
+            previewImage_72.style.maxHeight = "100px";
+            previewContainer.appendChild(previewImage_72);
           });
-          
+
           document.getElementById("downloadButton").disabled = false;
         }
       };
-      
+
       reader.readAsDataURL(file);
     } else {
       alert("Le fichier " + file.name + " n'est pas une image PNG valide.");
