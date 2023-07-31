@@ -56,9 +56,6 @@ function gererChargementFichiers(event) {
         imagesRedimensionnees.push({ dataUrl: image_72 });
         imagesRedimensionnees.push({ dataUrl: image_36 });
         imagesRedimensionnees.push({ dataUrl: image_18 });
-
-        // Activer le bouton "Télécharger ZIP" une fois que les images sont chargées
-        document.getElementById("downloadButton").disabled = false;
       };
 
       reader.readAsDataURL(file);
