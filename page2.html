@@ -3,12 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page d'exemple 2</title>
+  <title>Convertisseur de lien GitHub</title>
+  <script>
+    // Fonction pour convertir le lien GitHub en lien de téléchargement direct
+    function convertLink() {
+      var inputLink = document.getElementById("githubLink").value;
+      var directLink = inputLink.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/");
+      document.getElementById("directLink").innerHTML = "Lien de téléchargement direct : <a href='" + directLink + "' target='_blank'>" + directLink + "</a>";
+    }
+  </script>
 </head>
 <body>
-  <!-- Contenu de la page d'exemple 2 -->
-  <h1>Page d'exemple 2</h1>
-  <p>Ceci est la page d'exemple 2.</p>
+  <!-- Interface de conversion de lien GitHub -->
+  <h1>Convertisseur de lien GitHub</h1>
+  <p>Entrez le lien GitHub du fichier que vous souhaitez télécharger :</p>
+  <input type="text" id="githubLink" placeholder="Entrez le lien GitHub...">
+  <button onclick="convertLink()">Convertir</button>
+  <p id="directLink"></p>
 </body>
 </html>
-
