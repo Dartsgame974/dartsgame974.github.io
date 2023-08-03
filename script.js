@@ -27,28 +27,7 @@ fileInput.addEventListener('change', (event) => {
     handleFiles(files);
 });
 
-function handleFiles(files) {
-    previewContainer.innerHTML = '';
-    if (files.length === 0) {
-        dropArea.classList.add('empty');
-    } else {
-        dropArea.classList.remove('empty');
-        for (const file of files) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = document.createElement('img');
-                img.src = event.target.result;
-                const previewItem = document.createElement('div');
-                previewItem.classList.add('preview-item');
-                previewItem.appendChild(img);
-                previewContainer.appendChild(previewItem);
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-}
-
-// Fonction pour redimensionner une image dans une résolution spécifiée
+        // Fonction pour redimensionner une image dans une résolution spécifiée
         function resizeImage(image, resolution) {
             const canvas = document.createElement('canvas');
             canvas.width = resolution;
@@ -113,8 +92,7 @@ function handleFiles(files) {
         }
 
         // Attache l'événement "click" au bouton "Redimensionner"
-        document.getElement
-}
-
+        document.getElementById('resizeButton').addEventListener('click', onResizeButtonClick);
+} 
 const resizeButton = document.getElementById('resizeButton');
 resizeButton.addEventListener('click', resizeImagesAndCreateZip);
