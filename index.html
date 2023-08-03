@@ -6,15 +6,14 @@
     <link rel="stylesheet" href="./global.css" />
     <link rel="stylesheet" href="./index.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" />
-    <script type="text/javascript" src="/eel.js"></script>
 </head>
 <body>
     <div class="my-app">
         <div class="emotify-parent">
             <div class="emotify">Emotify</div>
-            <input class="textbox" type="text" placeholder="Chemin d'accès" />
+            <input class="textbox" type="text" id="chemin" placeholder="Chemin d'accès" />
 
-            <button class="button" id="Path" onclick="parcourirDossier()">
+            <button class="button" id="Path">
                 <div class="parcourir">Parcourir</div>
             </button>
             <div class="button-parent">
@@ -28,13 +27,39 @@
                     <div class="parcourir">Discord</div>
                 </button>
             </div>
-            <button class="button4" id="Redimensionner" onclick="redimensionnerImages()">
+            <button class="button4" id="Redimensionner">
                 <div class="parcourir">Redimensionner</div>
             </button>
         </div>
     </div>
 
-    <!-- Ajouter la balise script pour importer le fichier script.js -->
-    <script type="text/javascript" src="script.js"></script>
+    <!-- Ajouter le script pour manipuler les boutons -->
+    <script type="text/javascript">
+        document.getElementById("Path").addEventListener("click", function() {
+            // Code pour traiter le clic sur le bouton "Parcourir"
+            var cheminAcces = document.getElementById("chemin").value;
+            alert("Chemin d'accès : " + cheminAcces);
+        });
+
+        document.getElementById("bits").addEventListener("click", function() {
+            // Code pour traiter le clic sur le bouton "Bits"
+            alert("Bouton Bits cliqué !");
+        });
+
+        document.getElementById("channelpoints").addEventListener("click", function() {
+            // Code pour traiter le clic sur le bouton "Twitch"
+            alert("Bouton Twitch cliqué !");
+        });
+
+        document.getElementById("discord").addEventListener("click", function() {
+            // Code pour traiter le clic sur le bouton "Discord"
+            alert("Bouton Discord cliqué !");
+        });
+
+        document.getElementById("Redimensionner").addEventListener("click", function() {
+            // Code pour traiter le clic sur le bouton "Redimensionner"
+            alert("Bouton Redimensionner cliqué !");
+        });
+    </script>
 </body>
 </html>
