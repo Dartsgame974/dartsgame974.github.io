@@ -11,9 +11,9 @@
     <div class="my-app">
         <div class="emotify-parent">
             <div class="emotify">Emotify</div>
-            <input class="textbox" type="text" id="chemin" placeholder="Chemin d'accès" />
+            <input class="textbox" type="text" placeholder="Chemin d'accès" />
 
-            <button class="button" id="Path">
+            <button class="button" id="parcourir" onclick="parcourirDossier()">
                 <div class="parcourir">Parcourir</div>
             </button>
             <div class="button-parent">
@@ -27,39 +27,11 @@
                     <div class="parcourir">Discord</div>
                 </button>
             </div>
-            <button class="button4" id="Redimensionner">
+            <button class="button4" id="redimensionner" onclick="redimensionnerImages()">
                 <div class="parcourir">Redimensionner</div>
             </button>
         </div>
     </div>
-
-    <!-- Ajouter le script pour manipuler les boutons -->
-    <script type="text/javascript">
-        document.getElementById("Path").addEventListener("click", function() {
-            // Code pour traiter le clic sur le bouton "Parcourir"
-            var cheminAcces = document.getElementById("chemin").value;
-            alert("Chemin d'accès : " + cheminAcces);
-        });
-
-        document.getElementById("bits").addEventListener("click", function() {
-            // Code pour traiter le clic sur le bouton "Bits"
-            alert("Bouton Bits cliqué !");
-        });
-
-        document.getElementById("channelpoints").addEventListener("click", function() {
-            // Code pour traiter le clic sur le bouton "Twitch"
-            alert("Bouton Twitch cliqué !");
-        });
-
-        document.getElementById("discord").addEventListener("click", function() {
-            // Code pour traiter le clic sur le bouton "Discord"
-            alert("Bouton Discord cliqué !");
-        });
-
-        document.getElementById("Redimensionner").addEventListener("click", function() {
-            // Code pour traiter le clic sur le bouton "Redimensionner"
-            alert("Bouton Redimensionner cliqué !");
-        });
-    </script>
+    <script type="text/javascript" src="script.js"></script>
 </body>
 </html>
