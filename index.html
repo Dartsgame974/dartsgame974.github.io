@@ -3,39 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Redimensionnement d'Images et Création d'un Fichier Zip</title>
-    <!-- Lien vers la police Google Font - Montserrat -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap">
-    <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="file"] {
-            margin-bottom: 10px;
-        }
-
-        button {
-            display: block;
-            margin-top: 20px;
-        }
-
-        p {
-            margin: 10px 0;
-        }
-    </style>
 </head>
 <body>
     <h1>Redimensionnement d'Images</h1>
@@ -83,9 +50,9 @@
         // Fonction pour créer un fichier zip à partir des images redimensionnées
         function createZip(imagesData) {
             const zip = new JSZip();
-            imagesData.forEach((imageData) => {
-                const { folder, data } = imageData;
-                zip.folder(folder).file(`${folder}.jpg`, data.split(',')[1], { base64: true });
+            imagesData.forEach((imageData, index) => {
+                const fileName = `image_${index + 1}_${imageData.resolution}.jpg`;
+                zip.file(fileName, imageData.data.split(',')[1], { base64: true });
             });
             zip.generateAsync({ type: 'blob' }).then((content) => {
                 saveAs(content, 'images_resized.zip');
@@ -97,7 +64,7 @@
             const selectedResolutions = Array.from(document.querySelectorAll('input[name="resolutions"]:checked'))
                 .map(input => {
                     const [width, height] = input.value.split('x').map(Number);
-                    return { folder: input.value, width, height };
+                    return { resolution: input.value, width, height };
                 });
 
             const files = document.getElementById('fileInput').files;
@@ -119,9 +86,9 @@
                     image.onload = function() {
                         // Boucle pour redimensionner l'image pour chaque résolution choisie
                         for (const resolutionObj of selectedResolutions) {
-                            const { folder, width } = resolutionObj;
+                            const { resolution, width } = resolutionObj;
                             const resizedData = resizeImage(image, width);
-                            imagesData.push({ folder, data: resizedData });
+                            imagesData.push({ data: resizedData, resolution });
                         }
 
                         // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
