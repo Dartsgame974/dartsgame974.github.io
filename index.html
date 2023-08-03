@@ -1,124 +1,106 @@
 <!DOCTYPE html>
-<html lang="fr">
-
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes couiles</title>
+    <title>Redimensionnement d'Images et Création d'un Fichier Zip</title>
 </head>
-
 <body>
-    <!-- Input element to select files -->
+    <h1>Redimensionnement d'Images</h1>
     <input type="file" id="fileInput" multiple>
-
-    <!-- Checkboxes for resizing options -->
+    <br>
+    <p>Sélectionnez les résolutions :</p>
     <label>
-        <input type="checkbox" name="resizeOption" value="twitch"> Twitch
+        <input type="checkbox" name="resolutions" value="72x72">Twitch 72x72
     </label>
     <label>
-        <input type="checkbox" name="resizeOption" value="discord"> Discord
+        <input type="checkbox" name="resolutions" value="36x36">Twitch 36x36
     </label>
     <label>
-        <input type="checkbox" name="resizeOption" value="pointsDeChaine"> Points de chaîne
+        <input type="checkbox" name="resolutions" value="18x18">Twitch 18x18
     </label>
-
-    <!-- Button to initiate the resizing process -->
-    <button onclick="resizeImages()">Redimensionner</button>
-
-    <!-- JavaScript code -->
+    <br>
+    <label>
+        <input type="checkbox" name="resolutions" value="256x256">Discord 256x256
+    </label>
+    <br>
+    <label>
+        <input type="checkbox" name="resolutions" value="28x28">Points de chaîne 28x28
+    </label>
+    <label>
+        <input type="checkbox" name="resolutions" value="56x56">Points de chaîne 56x56
+    </label>
+    <label>
+        <input type="checkbox" name="resolutions" value="112x112">Points de chaîne 112x112
+    </label>
+    <br>
+    <button id="resizeButton">Redimensionner</button>
     <script>
-        function resizeImages() {
-            const selectedOptions = document.querySelectorAll('input[name="resizeOption"]:checked');
-            const files = document.getElementById("fileInput").files;
+        // Fonction pour redimensionner une image dans une résolution spécifiée
+        function resizeImage(image, resolution) {
+            const canvas = document.createElement('canvas');
+            canvas.width = resolution;
+            canvas.height = resolution;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0, resolution, resolution);
+            return canvas.toDataURL('image/jpeg', 1.0);
+        }
 
-            // Check if any files are selected
-            if (files.length === 0) {
-                alert("Aucun fichier sélectionné.");
+        // Fonction pour créer un fichier zip à partir des images redimensionnées
+        function createZip(imagesData) {
+            const zip = new JSZip();
+            imagesData.forEach((imageData, index) => {
+                zip.file(`image_${index + 1}.jpg`, imageData.split(',')[1], { base64: true });
+            });
+            zip.generateAsync({ type: 'blob' }).then((content) => {
+                saveAs(content, 'images_resized.zip');
+            });
+        }
+
+        // Fonction appelée lorsque le bouton "Redimensionner" est cliqué
+        function onResizeButtonClick() {
+            const selectedResolutions = Array.from(document.querySelectorAll('input[name="resolutions"]:checked'))
+                .map(input => input.value);
+
+            const files = document.getElementById('fileInput').files;
+            if (files.length === 0 || selectedResolutions.length === 0) {
+                alert('Veuillez sélectionner au moins un fichier et une résolution.');
                 return;
             }
 
-            // Resize and group the files
-            let totalImages = selectedOptions.length * files.length;
-            let imagesProcessed = 0;
-            let zip = new JSZip();
+            const imagesData = [];
 
-            for (const file of files) {
-                const fileName = file.name;
-                const fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
-
-                // Check if the file is an image
-                if (['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension.toLowerCase())) {
-                    for (const option of selectedOptions) {
-                        const selectedOption = option.value;
-                        const sizes = getSizes(selectedOption);
-                        for (const size of sizes) {
-                            resizeImage(file, selectedOption, size);
-                        }
-                    }
-                }
-            }
-
-            function getSizes(option) {
-                switch (option) {
-                    case 'twitch':
-                        return [72, 36, 18];
-                    case 'discord':
-                        return [256];
-                    case 'pointsDeChaine':
-                        return [28, 56, 112];
-                    default:
-                        return [];
-                }
-            }
-
-            function resizeImage(file, option, size) {
+            // Boucle pour traiter chaque fichier sélectionné
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
                 const reader = new FileReader();
-                reader.onload = function (event) {
-                    const img = new Image();
-                    img.onload = function () {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = size;
-                        canvas.height = size;
-                        ctx.drawImage(img, 0, 0, size, size);
-                        canvas.toBlob(function (blob) {
-                            const fileName = `${file.name.substring(0, file.name.lastIndexOf('.'))}_${size}x${size}.png`;
-                            zip.file(fileName, blob);
-                            imagesProcessed++;
-                            if (imagesProcessed === totalImages) {
-                                zip.generateAsync({ type: "blob" }).then(function (content) {
-                                    saveAs(content, "redimensionne.zip");
-                                });
-                            }
-                        }, 'image/png');
+
+                reader.onload = function(event) {
+                    const image = new Image();
+                    image.src = event.target.result;
+                    image.onload = function() {
+                        // Boucle pour redimensionner l'image pour chaque résolution choisie
+                        for (const resolution of selectedResolutions) {
+                            const [width, height] = resolution.split('x').map(Number);
+                            const resizedData = resizeImage(image, width);
+                            imagesData.push(resizedData);
+                        }
+
+                        // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
+                        if (imagesData.length === files.length * selectedResolutions.length) {
+                            createZip(imagesData);
+                        }
                     };
-                    img.src = event.target.result;
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // Include JSZip and FileSaver.js
-        const scriptElem = document.createElement('script');
-        scriptElem.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js";
-        scriptElem.onload = function () {
-            const fileSaverElem = document.createElement('script');
-            fileSaverElem.src = "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js";
-            fileSaverElem.onload = function () {
-                const script = document.createElement('script');
-                script.innerHTML = `
-                    let groupedFiles = {
-                        twitch: { sizes: [72, 36, 18], files: [] },
-                        discord: { sizes: [256], files: [] },
-                        pointsDeChaine: { sizes: [28, 56, 112], files: [] },
-                    };
-                `;
-                document.body.appendChild(script);
-            };
-            document.body.appendChild(fileSaverElem);
-        };
-        document.body.appendChild(scriptElem);
+        // Attache l'événement "click" au bouton "Redimensionner"
+        document.getElementById('resizeButton').addEventListener('click', onResizeButtonClick);
     </script>
 </body>
-
 </html>
+<!-- Inclure JSZip -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+<!-- Inclure FileSaver.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
