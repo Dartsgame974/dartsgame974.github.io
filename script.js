@@ -1,6 +1,18 @@
 function parcourirDossier() {
-    // Votre code pour parcourir le dossier et récupérer le chemin d'accès ici
-    console.log("Parcourir le dossier...");
+    // Ouvre une fenêtre de sélection de fichiers
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.multiple = true;
+    input.addEventListener('change', function(event) {
+        var files = event.target.files;
+        var chemin_acces = "";
+        for (var i = 0; i < files.length; i++) {
+            chemin_acces += files[i].name + "; ";
+        }
+        document.querySelector(".textbox").value = chemin_acces;
+    });
+    input.click();
 }
 
 function redimensionnerImage(chemin_image, taille) {
