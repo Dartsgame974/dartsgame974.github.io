@@ -48,20 +48,13 @@
             });
         }
 
-        // Fonction appelée lorsque le bouton "Redimensionner" est cliqué
-        function onResizeButtonClick() {
-            const selectedResolutions = Array.from(document.querySelectorAll('input[name="resolutions"]:checked'))
-                .map(input => input.value);
-
-            const files = document.getElementById('fileInput').files;
-            if (files.length === 0 || selectedResolutions.length === 0) {
-                alert('Veuillez sélectionner au moins un fichier et une résolution.');
-                return;
-            }
-
+        // Fonction pour redimensionner les images sélectionnées dans toutes les résolutions choisies
+        function resizeImages(selectedResolutions, files) {
             const imagesData = [];
 
-            // Boucle pour traiter chaque fichier sélectionné
+            let imagesLoaded = 0;
+            const totalImages = files.length * selectedResolutions.length;
+
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const reader = new FileReader();
@@ -75,11 +68,12 @@
                             const [width, height] = resolutionToSize(resolution);
                             const resizedData = resizeImage(image, width);
                             imagesData.push({ folder: resolution, resolution: `${width}x${height}`, data: resizedData });
-                        }
 
-                        // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
-                        if (imagesData.length === files.length * selectedResolutions.length) {
-                            createZip(imagesData);
+                            // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
+                            imagesLoaded++;
+                            if (imagesLoaded === totalImages) {
+                                createZip(imagesData);
+                            }
                         }
                     };
                 };
@@ -99,6 +93,20 @@
                 default:
                     return [0, 0];
             }
+        }
+
+        // Fonction appelée lorsque le bouton "Redimensionner" est cliqué
+        function onResizeButtonClick() {
+            const selectedResolutions = Array.from(document.querySelectorAll('input[name="resolutions"]:checked'))
+                .map(input => input.value);
+
+            const files = document.getElementById('fileInput').files;
+            if (files.length === 0 || selectedResolutions.length === 0) {
+                alert('Veuillez sélectionner au moins un fichier et une résolution.');
+                return;
+            }
+
+            resizeImages(selectedResolutions, files);
         }
 
         // Attache l'événement "click" au bouton "Redimensionner"
