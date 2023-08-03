@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redimensionner les fichiers</title>
+    <title>Mes couiles</title>
 </head>
 
 <body>
@@ -82,7 +82,7 @@
                         canvas.height = size;
                         ctx.drawImage(img, 0, 0, size, size);
                         canvas.toBlob(function (blob) {
-                            const fileName = `${option}/resize/${file.name.substring(0, file.name.lastIndexOf('.'))}_${size}x${size}.png`;
+                            const fileName = `${file.name.substring(0, file.name.lastIndexOf('.'))}_${size}x${size}.png`;
                             zip.file(fileName, blob);
                             imagesProcessed++;
                             if (imagesProcessed === totalImages) {
