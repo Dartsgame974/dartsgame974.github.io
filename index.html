@@ -10,27 +10,13 @@
     <br>
     <p>Sélectionnez les résolutions :</p>
     <label>
-        <input type="checkbox" name="resolutions" value="72x72">Twitch 72x72
+        <input type="checkbox" name="resolutions" value="Twitch">Twitch
     </label>
     <label>
-        <input type="checkbox" name="resolutions" value="36x36">Twitch 36x36
+        <input type="checkbox" name="resolutions" value="Discord">Discord
     </label>
     <label>
-        <input type="checkbox" name="resolutions" value="18x18">Twitch 18x18
-    </label>
-    <br>
-    <label>
-        <input type="checkbox" name="resolutions" value="256x256">Discord 256x256
-    </label>
-    <br>
-    <label>
-        <input type="checkbox" name="resolutions" value="28x28">Points de chaîne 28x28
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="56x56">Points de chaîne 56x56
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="112x112">Points de chaîne 112x112
+        <input type="checkbox" name="resolutions" value="Points de chaîne">Points de chaîne
     </label>
     <br>
     <button id="resizeButton">Redimensionner</button>
@@ -50,10 +36,13 @@
         // Fonction pour créer un fichier zip à partir des images redimensionnées
         function createZip(imagesData) {
             const zip = new JSZip();
-            imagesData.forEach((imageData, index) => {
-                const fileName = `image_${index + 1}_${imageData.resolution}.jpg`;
-                zip.file(fileName, imageData.data.split(',')[1], { base64: true });
+
+            imagesData.forEach((imageData) => {
+                const { folder, resolution, data } = imageData;
+                const folderName = folder + " " + resolution;
+                zip.folder(folderName).file(`${resolution}.jpg`, data.split(',')[1], { base64: true });
             });
+
             zip.generateAsync({ type: 'blob' }).then((content) => {
                 saveAs(content, 'images_resized.zip');
             });
@@ -62,10 +51,7 @@
         // Fonction appelée lorsque le bouton "Redimensionner" est cliqué
         function onResizeButtonClick() {
             const selectedResolutions = Array.from(document.querySelectorAll('input[name="resolutions"]:checked'))
-                .map(input => {
-                    const [width, height] = input.value.split('x').map(Number);
-                    return { resolution: input.value, width, height };
-                });
+                .map(input => input.value);
 
             const files = document.getElementById('fileInput').files;
             if (files.length === 0 || selectedResolutions.length === 0) {
@@ -85,10 +71,10 @@
                     image.src = event.target.result;
                     image.onload = function() {
                         // Boucle pour redimensionner l'image pour chaque résolution choisie
-                        for (const resolutionObj of selectedResolutions) {
-                            const { resolution, width } = resolutionObj;
+                        for (const resolution of selectedResolutions) {
+                            const [width, height] = resolutionToSize(resolution);
                             const resizedData = resizeImage(image, width);
-                            imagesData.push({ data: resizedData, resolution });
+                            imagesData.push({ folder: resolution, resolution: `${width}x${height}`, data: resizedData });
                         }
 
                         // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
@@ -98,6 +84,20 @@
                     };
                 };
                 reader.readAsDataURL(file);
+            }
+        }
+
+        // Fonction pour obtenir la taille correspondant à la résolution choisie
+        function resolutionToSize(resolution) {
+            switch (resolution) {
+                case 'Twitch':
+                    return [72, 72];
+                case 'Discord':
+                    return [256, 256];
+                case 'Points de chaîne':
+                    return [112, 112];
+                default:
+                    return [0, 0];
             }
         }
 
