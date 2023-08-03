@@ -96,7 +96,7 @@
             for (const option in groupedFiles) {
                 const optionFolder = zip.folder(option);
                 for (const file of groupedFiles[option].files) {
-                    optionFolder.file(file.name, file.blob);
+                    optionFolder.file(file.name, file.blob, { base64: true });
                 }
             }
 
