@@ -45,7 +45,7 @@
             };
 
             // Resize and group the files
-            let totalImages = 0;
+            let totalImages = selectedOptions.length * files.length;
             let imagesProcessed = 0;
 
             for (const file of files) {
@@ -54,7 +54,6 @@
 
                 // Check if the file is an image
                 if (['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension.toLowerCase())) {
-                    totalImages += selectedOptions.length;
                     for (const option of selectedOptions) {
                         const selectedOption = option.value;
                         const sizes = groupedFiles[selectedOption].sizes;
@@ -79,7 +78,7 @@
                             const fileName = `${option}/${file.name.substring(0, file.name.lastIndexOf('.'))}_${size}x${size}.png`;
                             groupedFiles[option].files.push({ name: fileName, blob });
                             imagesProcessed++;
-                            if (imagesProcessed === totalImages * selectedOptions.length) {
+                            if (imagesProcessed === totalImages) {
                                 createZip();
                             }
                         }, 'image/png');
