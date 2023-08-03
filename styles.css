@@ -1,91 +1,94 @@
-.emotify {
-  border: 0;
-  background-color: transparent;
-  font-weight: 900;
-  font-family: var(--font-montserrat);
-  font-size: 55px;
-  position: relative;
-  color: var(--color-white);
-  text-align: left;
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a; /* Couleur de fond en mode sombre */
+    color: #ffffff; /* Couleur du texte en mode sombre */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
-.textbox {
-  border: 0;
-  background-color: #5876b0;
-  align-self: stretch;
-  border-radius: var(--br-10xs);
-  overflow: hidden;
+
+h1 {
+    text-align: center;
+    padding: 20px;
 }
-.parcourir {
-  position: relative;
-  font-size: var(--font-size-base);
-  font-weight: 900;
-  font-family: var(--font-montserrat);
-  color: var(--color-white);
-  text-align: left;
+
+.drop-area {
+    border: 2px dashed #007bff; /* Couleur de la zone de drag and drop en mode sombre */
+    padding: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
-.button,
-.button1 {
-  cursor: pointer;
-  border: 0;
-  padding: var(--padding-3xs);
-  border-radius: var(--br-10xs);
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
+
+.drop-area:hover {
+    border-color: #0056b3; /* Couleur de la zone de drag and drop en mode sombre lors du survol */
 }
-.button {
-  background-color: var(--color-coral);
-  align-self: stretch;
-  display: flex;
-  flex-direction: row;
+
+p {
+    margin: 5px 0;
 }
-.button1 {
-  background-color: var(--color-darkgray);
-  flex: 1;
+
+label {
+    display: block;
+    margin: 5px 0;
 }
-.button-parent,
-.button1,
-.button4 {
-  display: flex;
-  flex-direction: row;
+
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff; /* Couleur du bouton en mode sombre */
+    color: #ffffff; /* Couleur du texte du bouton en mode sombre */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
-.button-parent {
-  width: 237px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+
+button:hover {
+    background-color: #0056b3; /* Couleur du bouton en mode sombre lors du survol */
 }
-.button4 {
-  cursor: pointer;
-  border: 0;
-  padding: var(--padding-3xs);
-  background-color: var(--color-coral);
-  align-self: stretch;
-  border-radius: var(--br-10xs);
-  overflow: hidden;
-  align-items: flex-end;
-  justify-content: space-between;
+
+/* Cacher le champ de fichier d'origine */
+input[type="file"] {
+    display: none;
 }
-.emotify-parent {
-  position: absolute;
-  height: 100%;
-  width: calc(100% + 1px);
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: -1px;
-  display: flex;
-  flex-direction: column;
-  padding: 62px 47px;
-  box-sizing: border-box;
-  align-items: center;
-  justify-content: center;
-  gap: 27px;
+
+/* Styler la zone de drag and drop lorsqu'un fichier est survolé */
+.drop-area.active {
+    border-color: #0056b3; /* Couleur de la zone de drag and drop en mode sombre lors du survol avec un fichier */
 }
-.my-app {
-  position: relative;
-  background: linear-gradient(-1.06deg, #380170, rgba(27, 96, 200, 0), #1b60c8);
-  width: 100%;
-  height: 605px;
-  overflow: hidden;
+
+/* Afficher le texte "Aucun fichier choisi" lorsque aucun fichier n'a été sélectionné */
+.drop-area.empty:after {
+    content: "Faites glisser et déposez les fichiers ici ou cliquez pour sélectionner des images.";
+    font-size: 14px;
+    color: #ffffff; /* Couleur du texte en mode sombre */
+}
+
+/* Afficher la prévisualisation des images chargées */
+.preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.preview-item {
+    width: 200px;
+    margin: 10px;
+    border: 1px solid #007bff; /* Couleur de la bordure en mode sombre */
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.preview-item img {
+    max-width: 100%;
+    height: auto;
 }
