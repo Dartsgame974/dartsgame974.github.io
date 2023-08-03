@@ -10,13 +10,27 @@
     <br>
     <p>Sélectionnez les résolutions :</p>
     <label>
-        <input type="checkbox" name="resolutions" value="Twitch">Twitch
+        <input type="checkbox" name="resolutions" value="72x72">Twitch 72x72
     </label>
     <label>
-        <input type="checkbox" name="resolutions" value="Discord">Discord
+        <input type="checkbox" name="resolutions" value="36x36">Twitch 36x36
     </label>
     <label>
-        <input type="checkbox" name="resolutions" value="Points de chaîne">Points de chaîne
+        <input type="checkbox" name="resolutions" value="18x18">Twitch 18x18
+    </label>
+    <br>
+    <label>
+        <input type="checkbox" name="resolutions" value="256x256">Discord 256x256
+    </label>
+    <br>
+    <label>
+        <input type="checkbox" name="resolutions" value="28x28">Points de chaîne 28x28
+    </label>
+    <label>
+        <input type="checkbox" name="resolutions" value="56x56">Points de chaîne 56x56
+    </label>
+    <label>
+        <input type="checkbox" name="resolutions" value="112x112">Points de chaîne 112x112
     </label>
     <br>
     <button id="resizeButton">Redimensionner</button>
@@ -25,76 +39,33 @@
     <script>
         // Fonction pour redimensionner une image dans une résolution spécifiée
         function resizeImage(image, resolution) {
-            return new Promise((resolve) => {
-                const canvas = document.createElement('canvas');
-                canvas.width = resolution;
-                canvas.height = resolution;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(image, 0, 0, resolution, resolution);
-                resolve(canvas.toDataURL('image/jpeg', 1.0));
-            });
+            const canvas = document.createElement('canvas');
+            canvas.width = resolution;
+            canvas.height = resolution;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0, resolution, resolution);
+            return canvas.toDataURL('image/jpeg', 1.0);
         }
 
         // Fonction pour créer un fichier zip à partir des images redimensionnées
         function createZip(imagesData) {
             const zip = new JSZip();
-
             imagesData.forEach((imageData) => {
-                const { folder, resolution, data } = imageData;
-                const folderName = folder + " " + resolution;
-                zip.folder(folderName).file(`${resolution}.jpg`, data.split(',')[1], { base64: true });
+                const { folder, data } = imageData;
+                zip.folder(folder).file(`${folder}.jpg`, data.split(',')[1], { base64: true });
             });
-
             zip.generateAsync({ type: 'blob' }).then((content) => {
                 saveAs(content, 'images_resized.zip');
             });
         }
 
-        // Fonction pour redimensionner les images sélectionnées dans toutes les résolutions choisies
-        async function resizeImages(selectedResolutions, files) {
-            const imagesData = [];
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-
-                reader.onload = async function(event) {
-                    const image = new Image();
-                    image.src = event.target.result;
-
-                    for (const resolution of selectedResolutions) {
-                        const [width, height] = resolutionToSize(resolution);
-                        const resizedData = await resizeImage(image, width);
-                        imagesData.push({ folder: resolution, resolution: `${width}x${height}`, data: resizedData });
-                    }
-
-                    // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
-                    if (imagesData.length === files.length * selectedResolutions.length) {
-                        createZip(imagesData);
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Fonction pour obtenir la taille correspondant à la résolution choisie
-        function resolutionToSize(resolution) {
-            switch (resolution) {
-                case 'Twitch':
-                    return [72, 72];
-                case 'Discord':
-                    return [256, 256];
-                case 'Points de chaîne':
-                    return [112, 112];
-                default:
-                    return [0, 0];
-            }
-        }
-
         // Fonction appelée lorsque le bouton "Redimensionner" est cliqué
         function onResizeButtonClick() {
             const selectedResolutions = Array.from(document.querySelectorAll('input[name="resolutions"]:checked'))
-                .map(input => input.value);
+                .map(input => {
+                    const [width, height] = input.value.split('x').map(Number);
+                    return { folder: input.value, width, height };
+                });
 
             const files = document.getElementById('fileInput').files;
             if (files.length === 0 || selectedResolutions.length === 0) {
@@ -102,7 +73,32 @@
                 return;
             }
 
-            resizeImages(selectedResolutions, files);
+            const imagesData = [];
+
+            // Boucle pour traiter chaque fichier sélectionné
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const image = new Image();
+                    image.src = event.target.result;
+                    image.onload = function() {
+                        // Boucle pour redimensionner l'image pour chaque résolution choisie
+                        for (const resolutionObj of selectedResolutions) {
+                            const { folder, width } = resolutionObj;
+                            const resizedData = resizeImage(image, width);
+                            imagesData.push({ folder, data: resizedData });
+                        }
+
+                        // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
+                        if (imagesData.length === files.length * selectedResolutions.length) {
+                            createZip(imagesData);
+                        }
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         // Attache l'événement "click" au bouton "Redimensionner"
