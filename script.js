@@ -1,46 +1,120 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Redimensionnement d'Images et Création d'un Fichier Zip</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <h1>Redimensionnement d'Images</h1>
-    <div class="drop-area" id="dropArea">
-        <p>Faites glisser et déposez les fichiers ici ou cliquez pour sélectionner des images.</p>
-        <input type="file" id="fileInput" multiple>
-    </div>
-    <div class="preview-container" id="previewContainer"></div>
-    <p>Sélectionnez les résolutions :</p>
-    <label>
-        <input type="checkbox" name="resolutions" value="72x72">Twitch 72x72
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="36x36">Twitch 36x36
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="18x18">Twitch 18x18
-    </label>
-    <br>
-    <label>
-        <input type="checkbox" name="resolutions" value="256x256">Discord 256x256
-    </label>
-    <br>
-    <label>
-        <input type="checkbox" name="resolutions" value="28x28">Points de chaîne 28x28
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="56x56">Points de chaîne 56x56
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="112x112">Points de chaîne 112x112
-    </label>
-    <br>
-    <button id="resizeButton">Redimensionner</button>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('fileInput');
+const previewContainer = document.getElementById('previewContainer');
+
+dropArea.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    dropArea.classList.add('active');
+});
+
+dropArea.addEventListener('dragleave', () => {
+    dropArea.classList.remove('active');
+});
+
+dropArea.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dropArea.classList.remove('active');
+    const files = event.dataTransfer.files;
+    handleFiles(files);
+});
+
+dropArea.addEventListener('click', () => {
+    fileInput.click();
+});
+
+fileInput.addEventListener('change', (event) => {
+    const files = event.target.files;
+    handleFiles(files);
+});
+
+function handleFiles(files) {
+    previewContainer.innerHTML = '';
+    if (files.length === 0) {
+        dropArea.classList.add('empty');
+    } else {
+        dropArea.classList.remove('empty');
+        for (const file of files) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                const previewItem = document.createElement('div');
+                previewItem.classList.add('preview-item');
+                previewItem.appendChild(img);
+                previewContainer.appendChild(previewItem);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+}
+
+// Fonction pour redimensionner une image dans une résolution spécifiée
+        function resizeImage(image, resolution) {
+            const canvas = document.createElement('canvas');
+            canvas.width = resolution;
+            canvas.height = resolution;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0, resolution, resolution);
+            return canvas.toDataURL('image/jpeg', 1.0);
+        }
+
+        // Fonction pour créer un fichier zip à partir des images redimensionnées
+        function createZip(imagesData) {
+            const zip = new JSZip();
+            imagesData.forEach((imageData, index) => {
+                const fileName = `image_${index + 1}_${imageData.resolution}.jpg`;
+                zip.file(fileName, imageData.data.split(',')[1], { base64: true });
+            });
+            zip.generateAsync({ type: 'blob' }).then((content) => {
+                saveAs(content, 'images_resized.zip');
+            });
+        }
+
+        // Fonction appelée lorsque le bouton "Redimensionner" est cliqué
+        function onResizeButtonClick() {
+            const selectedResolutions = Array.from(document.querySelectorAll('input[name="resolutions"]:checked'))
+                .map(input => {
+                    const [width, height] = input.value.split('x').map(Number);
+                    return { resolution: input.value, width, height };
+                });
+
+            const files = document.getElementById('fileInput').files;
+            if (files.length === 0 || selectedResolutions.length === 0) {
+                alert('Veuillez sélectionner au moins un fichier et une résolution.');
+                return;
+            }
+
+            const imagesData = [];
+
+            // Boucle pour traiter chaque fichier sélectionné
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const image = new Image();
+                    image.src = event.target.result;
+                    image.onload = function() {
+                        // Boucle pour redimensionner l'image pour chaque résolution choisie
+                        for (const resolutionObj of selectedResolutions) {
+                            const { resolution, width } = resolutionObj;
+                            const resizedData = resizeImage(image, width);
+                            imagesData.push({ data: resizedData, resolution });
+                        }
+
+                        // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
+                        if (imagesData.length === files.length * selectedResolutions.length) {
+                            createZip(imagesData);
+                        }
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Attache l'événement "click" au bouton "Redimensionner"
+        document.getElement
+}
+
+const resizeButton = document.getElementById('resizeButton');
+resizeButton.addEventListener('click', resizeImagesAndCreateZip);
