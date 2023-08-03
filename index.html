@@ -1,110 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 
 <head>
-  <title>Redimensionner les fichiers</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redimensionner les fichiers</title>
 </head>
 
 <body>
-  <h1>Redimensionner les fichiers</h1>
-  <input type="file" id="fileInput" multiple>
-  <button onclick="resizeImages()">Redimensionner</button>
+    <!-- Input element to select files -->
+    <input type="file" id="fileInput" multiple>
 
-  <script>
-    // Fonction pour redimensionner les images à différentes tailles
-    function resizeImages() {
-      const fileInput = document.getElementById('fileInput');
-      const files = fileInput.files;
+    <!-- Select options for resizing -->
+    <select id="resizeOption">
+        <option value="twitch">Twitch</option>
+        <option value="discord">Discord</option>
+        <option value="pointsDeChaine">Points de chaîne</option>
+    </select>
 
-      // Vérifier s'il y a des fichiers sélectionnés
-      if (files.length === 0) {
-        alert('Veuillez sélectionner au moins un fichier.');
-        return;
-      }
+    <!-- Button to initiate the resizing process -->
+    <button onclick="resizeImages()">Redimensionner</button>
 
-      // Créer un objet pour stocker les fichiers redimensionnés
-      const resizedFiles = {
-        Twitch: {
-          '72x72': [],
-          '36x36': [],
-          '18x18': []
-        },
-        Discord: {
-          '256x256': []
-        },
-        'Points de chaîne': {
-          '28x28': [],
-          '56x56': [],
-          '112x112': []
+    <!-- JavaScript code -->
+    <script>
+        // Function to handle file selection
+        function resizeImages() {
+            const selectedOption = document.getElementById("resizeOption").value;
+            const files = document.getElementById("fileInput").files;
+
+            // Check if any files are selected
+            if (files.length === 0) {
+                alert("Aucun fichier sélectionné.");
+                return;
+            }
+
+            // Group the files based on their sizes
+            const groupedFiles = {};
+            for (const file of files) {
+                const size = getSize(file.name);
+                if (!groupedFiles[size]) {
+                    groupedFiles[size] = [];
+                }
+                groupedFiles[size].push(file);
+            }
+
+            // Create a zip for each group
+            for (const size in groupedFiles) {
+                const zip = new JSZip();
+
+                for (const file of groupedFiles[size]) {
+                    zip.file(file.name, file);
+                }
+
+                // Save the zip with the appropriate name
+                zip.generateAsync({ type: "blob" }).then(function (content) {
+                    saveAs(content, `${selectedOption}_${size}.zip`);
+                });
+            }
         }
-      };
 
-      // Boucle sur les fichiers sélectionnés
-      for (const file of files) {
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-
-        // Redimensionner l'image pour Twitch
-        const twitchSizes = [72, 36, 18];
-        for (const size of twitchSizes) {
-          const canvas = document.createElement('canvas');
-          canvas.width = size;
-          canvas.height = size;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, size, size);
-          canvas.toBlob(blob => {
-            resizedFiles.Twitch[`${size}x${size}`].push(new File([blob], `${file.name}_${size}x${size}.png`));
-          }, 'image/png');
+        // Function to get the size from the file name
+        function getSize(fileName) {
+            const regex = /(\d+)x(\d+)/;
+            const match = fileName.match(regex);
+            if (match) {
+                return match[0];
+            }
+            return "unknown";
         }
-
-        // Redimensionner l'image pour Discord
-        const discordSize = 256;
-        const discordCanvas = document.createElement('canvas');
-        discordCanvas.width = discordSize;
-        discordCanvas.height = discordSize;
-        const discordCtx = discordCanvas.getContext('2d');
-        discordCtx.drawImage(img, 0, 0, discordSize, discordSize);
-        discordCanvas.toBlob(blob => {
-          resizedFiles.Discord[`${discordSize}x${discordSize}`].push(new File([blob], `${file.name}_${discordSize}x${discordSize}.png`));
-        }, 'image/png');
-
-        // Redimensionner l'image pour Points de chaîne
-        const channelPointsSizes = [28, 56, 112];
-        for (const size of channelPointsSizes) {
-          const channelPointsCanvas = document.createElement('canvas');
-          channelPointsCanvas.width = size;
-          channelPointsCanvas.height = size;
-          const channelPointsCtx = channelPointsCanvas.getContext('2d');
-          channelPointsCtx.drawImage(img, 0, 0, size, size);
-          channelPointsCanvas.toBlob(blob => {
-            resizedFiles['Points de chaîne'][`${size}x${size}`].push(new File([blob], `${file.name}_${size}x${size}.png`));
-          }, 'image/png');
-        }
-      }
-
-      // Créer le zip contenant les fichiers redimensionnés
-      const zip = new JSZip();
-      for (const platform in resizedFiles) {
-        const platformFolder = zip.folder(platform);
-        for (const size in resizedFiles[platform]) {
-          for (const file of resizedFiles[platform][size]) {
-            platformFolder.file(file.name, file);
-          }
-        }
-      }
-
-      // Générer le fichier zip
-      zip.generateAsync({ type: 'blob' })
-        .then(function (content) {
-          // Télécharger le fichier zip
-          const zipFileName = 'redimensionnes.zip';
-          const link = document.createElement('a');
-          link.href = URL.createObjectURL(content);
-          link.download = zipFileName;
-          link.click();
-        });
-    }
-  </script>
+    </script>
 </body>
 
 </html>
