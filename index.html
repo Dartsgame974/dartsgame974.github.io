@@ -11,6 +11,11 @@
             padding: 0;
             background-color: #1a1a1a; /* Couleur de fond en mode sombre */
             color: #ffffff; /* Couleur du texte en mode sombre */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
         h1 {
@@ -18,13 +23,20 @@
             padding: 20px;
         }
 
-        input[type="file"] {
-            margin: 10px 0;
+        .drop-area {
+            border: 2px dashed #007bff; /* Couleur de la zone de drag and drop en mode sombre */
+            padding: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .drop-area:hover {
+            border-color: #0056b3; /* Couleur de la zone de drag and drop en mode sombre lors du survol */
         }
 
         p {
             margin: 5px 0;
-            color: #ffffff; /* Couleur du texte en mode sombre */
         }
 
         label {
@@ -50,8 +62,10 @@
 </head>
 <body>
     <h1>Redimensionnement d'Images</h1>
-    <input type="file" id="fileInput" multiple>
-    <br>
+    <div class="drop-area" id="dropArea">
+        <p>Faites glisser et déposez les fichiers ici ou cliquez pour sélectionner des images.</p>
+        <input type="file" id="fileInput" multiple style="display: none;">
+    </div>
     <p>Sélectionnez les résolutions :</p>
     <label>
         <input type="checkbox" name="resolutions" value="72x72">Twitch 72x72
