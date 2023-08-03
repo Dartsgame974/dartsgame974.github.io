@@ -11,12 +11,19 @@
     <!-- Input element to select files -->
     <input type="file" id="fileInput" multiple>
 
-    <!-- Select options for resizing -->
-    <select id="resizeOption">
-        <option value="twitch">Twitch</option>
-        <option value="discord">Discord</option>
-        <option value="pointsDeChaine">Points de chaîne</option>
-    </select>
+    <!-- Radio buttons for resizing options -->
+    <label>
+        <input type="radio" name="resizeOption" value="twitch" checked>
+        Twitch
+    </label>
+    <label>
+        <input type="radio" name="resizeOption" value="discord">
+        Discord
+    </label>
+    <label>
+        <input type="radio" name="resizeOption" value="pointsDeChaine">
+        Points de chaîne
+    </label>
 
     <!-- Button to initiate the resizing process -->
     <button onclick="resizeImages()">Redimensionner</button>
@@ -24,7 +31,7 @@
     <!-- JavaScript code -->
     <script>
         function resizeImages() {
-            const selectedOption = document.getElementById("resizeOption").value;
+            const selectedOption = document.querySelector('input[name="resizeOption"]:checked').value;
             const files = document.getElementById("fileInput").files;
 
             // Check if any files are selected
