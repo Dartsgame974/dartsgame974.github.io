@@ -130,6 +130,8 @@
             }
 
             const imagesData = [];
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = ''; // Effacer les miniatures précédentes
 
             // Boucle pour traiter chaque fichier sélectionné
             for (let i = 0; i < files.length; i++) {
@@ -153,6 +155,13 @@
                         }
                     };
                 };
+
+                // Prévisualisation de l'image chargée
+                const previewImage = document.createElement('img');
+                previewImage.classList.add('previewImage');
+                previewImage.src = URL.createObjectURL(file);
+                previewContainer.appendChild(previewImage);
+
                 reader.readAsDataURL(file);
             }
         }
