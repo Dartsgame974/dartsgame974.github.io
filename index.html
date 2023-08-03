@@ -86,9 +86,26 @@
                             zip.folder(option).file(fileName, blob);
                             imagesProcessed++;
                             if (imagesProcessed === totalImages) {
-                                zip.generateAsync({ type: "blob" }).then(function (content) {
-                                    saveAs(content, "redimensionne.zip");
-                                });
+                                if (selectedOptions.length > 1) {
+                                    zip.generateAsync({ type: "blob" }).then(function (content) {
+                                        saveAs(content, "redimensionne.zip");
+                                    });
+                                } else {
+                                    const optionFolder = zip.folder(selectedOptions[0].value);
+                                    for (const file of files) {
+                                        const fileName = file.name;
+                                        const fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
+                                        if (['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension.toLowerCase())) {
+                                            const sizes = getSizes(selectedOptions[0].value);
+                                            for (const size of sizes) {
+                                                resizeImage(file, selectedOptions[0].value, size);
+                                            }
+                                        }
+                                    }
+                                    optionFolder.generateAsync({ type: "blob" }).then(function (content) {
+                                        saveAs(content, "redimensionne.zip");
+                                    });
+                                }
                             }
                         }, 'image/png');
                     };
