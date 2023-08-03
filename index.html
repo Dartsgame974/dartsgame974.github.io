@@ -35,21 +35,28 @@
     <br>
     <button id="resizeButton">Redimensionner</button>
     <script>
+        // Fonction pour obtenir le nom de fichier sans l'extension
+        function getFileNameWithoutExtension(fileName) {
+            return fileName.split('.').slice(0, -1).join('.');
+        }
+
         // Fonction pour redimensionner une image dans une résolution spécifiée
-        function resizeImage(image, resolution) {
+        function resizeImage(image, resolution, fileName) {
             const canvas = document.createElement('canvas');
             canvas.width = resolution;
             canvas.height = resolution;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(image, 0, 0, resolution, resolution);
-            return canvas.toDataURL('image/jpeg', 1.0);
+            const resizedData = canvas.toDataURL('image/jpeg', 1.0);
+            return `${fileName}+${resolution}+${getFileNameWithoutExtension(image.src.split('/').pop())}.jpg`;
         }
 
         // Fonction pour créer un fichier zip à partir des images redimensionnées
         function createZip(imagesData) {
             const zip = new JSZip();
-            imagesData.forEach((imageData, index) => {
-                zip.file(`image_${index + 1}.jpg`, imageData.split(',')[1], { base64: true });
+            imagesData.forEach((imageData) => {
+                const [data, fileName] = imageData.split('+');
+                zip.file(fileName, data.split(',')[1], { base64: true });
             });
             zip.generateAsync({ type: 'blob' }).then((content) => {
                 saveAs(content, 'images_resized.zip');
@@ -81,7 +88,7 @@
                         // Boucle pour redimensionner l'image pour chaque résolution choisie
                         for (const resolution of selectedResolutions) {
                             const [width, height] = resolution.split('x').map(Number);
-                            const resizedData = resizeImage(image, width);
+                            const resizedData = resizeImage(image, width, file.name);
                             imagesData.push(resizedData);
                         }
 
@@ -100,6 +107,7 @@
     </script>
 </body>
 </html>
+
 <!-- Inclure JSZip -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
 <!-- Inclure FileSaver.js -->
