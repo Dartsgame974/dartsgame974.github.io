@@ -29,6 +29,10 @@
             border-radius: 5px;
             cursor: pointer;
             transition: border-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
 
         .drop-area:hover {
@@ -58,13 +62,30 @@
         button:hover {
             background-color: #0056b3; /* Couleur du bouton en mode sombre lors du survol */
         }
+
+        /* Cacher le champ de fichier d'origine */
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Styler la zone de drag and drop lorsqu'un fichier est survolé */
+        .drop-area.active {
+            border-color: #0056b3; /* Couleur de la zone de drag and drop en mode sombre lors du survol avec un fichier */
+        }
+
+        /* Afficher le texte "Aucun fichier choisi" lorsque aucun fichier n'a été sélectionné */
+        .drop-area.empty:after {
+            content: "Aucun fichier choisi";
+            font-size: 14px;
+            color: #ffffff; /* Couleur du texte en mode sombre */
+        }
     </style>
 </head>
 <body>
     <h1>Redimensionnement d'Images</h1>
-    <div class="drop-area" id="dropArea">
-        <p>Faites glisser et déposez les fichiers ici ou cliquez pour sélectionner des images.</p>
-        <input type="file" id="fileInput" multiple style="display: none;">
+    <div class="drop-area empty" id="dropArea">
+        <p>Faites glisser et déposez les fichiers ici</p>
+        <input type="file" id="fileInput" multiple>
     </div>
     <p>Sélectionnez les résolutions :</p>
     <label>
@@ -161,7 +182,6 @@
 
         // Attache l'événement "click" au bouton "Redimensionner"
         document.getElementById('resizeButton').addEventListener('click', onResizeButtonClick);
-    </script>
     </script>
 </body>
 </html>
