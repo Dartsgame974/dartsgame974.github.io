@@ -13,16 +13,13 @@
 
     <!-- Radio buttons for resizing options -->
     <label>
-        <input type="radio" name="resizeOption" value="twitch" checked>
-        Twitch
+        <input type="radio" name="resizeOption" value="twitch"> Twitch
     </label>
     <label>
-        <input type="radio" name="resizeOption" value="discord">
-        Discord
+        <input type="radio" name="resizeOption" value="discord"> Discord
     </label>
     <label>
-        <input type="radio" name="resizeOption" value="pointsDeChaine">
-        Points de chaîne
+        <input type="radio" name="resizeOption" value="pointsDeChaine"> Points de chaîne
     </label>
 
     <!-- Button to initiate the resizing process -->
@@ -31,7 +28,7 @@
     <!-- JavaScript code -->
     <script>
         function resizeImages() {
-            const selectedOption = document.querySelector('input[name="resizeOption"]:checked').value;
+            const selectedOptions = document.querySelectorAll('input[name="resizeOption"]:checked');
             const files = document.getElementById("fileInput").files;
 
             // Check if any files are selected
@@ -40,28 +37,31 @@
                 return;
             }
 
-            // Group the files based on their sizes
+            // Group the files based on their sizes and selected options
             const groupedFiles = {};
             for (const file of files) {
                 const size = getSize(file.name);
-                if (!groupedFiles[size]) {
-                    groupedFiles[size] = [];
+                for (const option of selectedOptions) {
+                    const selectedOption = option.value;
+                    const key = `${selectedOption}_${size}`;
+                    if (!groupedFiles[key]) {
+                        groupedFiles[key] = [];
+                    }
+                    groupedFiles[key].push(file);
                 }
-                groupedFiles[size].push(file);
             }
 
             // Create a zip for each group
-            for (const size in groupedFiles) {
+            for (const key in groupedFiles) {
                 const zip = new JSZip();
 
-                for (const file of groupedFiles[size]) {
+                for (const file of groupedFiles[key]) {
                     zip.file(file.name, file);
                 }
 
                 // Save the zip with the appropriate name
                 zip.generateAsync({ type: "blob" }).then(function (content) {
-                    const zipFileName = `${selectedOption}_${size}.zip`;
-                    saveAs(content, zipFileName);
+                    saveAs(content, `${key}.zip`);
                 });
             }
         }
