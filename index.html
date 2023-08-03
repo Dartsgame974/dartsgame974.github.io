@@ -25,12 +25,14 @@
     <script>
         // Fonction pour redimensionner une image dans une résolution spécifiée
         function resizeImage(image, resolution) {
-            const canvas = document.createElement('canvas');
-            canvas.width = resolution;
-            canvas.height = resolution;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(image, 0, 0, resolution, resolution);
-            return canvas.toDataURL('image/jpeg', 1.0);
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = resolution;
+                canvas.height = resolution;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(image, 0, 0, resolution, resolution);
+                resolve(canvas.toDataURL('image/jpeg', 1.0));
+            });
         }
 
         // Fonction pour créer un fichier zip à partir des images redimensionnées
@@ -49,33 +51,27 @@
         }
 
         // Fonction pour redimensionner les images sélectionnées dans toutes les résolutions choisies
-        function resizeImages(selectedResolutions, files) {
+        async function resizeImages(selectedResolutions, files) {
             const imagesData = [];
-
-            let imagesLoaded = 0;
-            const totalImages = files.length * selectedResolutions.length;
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const reader = new FileReader();
 
-                reader.onload = function(event) {
+                reader.onload = async function(event) {
                     const image = new Image();
                     image.src = event.target.result;
-                    image.onload = function() {
-                        // Boucle pour redimensionner l'image pour chaque résolution choisie
-                        for (const resolution of selectedResolutions) {
-                            const [width, height] = resolutionToSize(resolution);
-                            const resizedData = resizeImage(image, width);
-                            imagesData.push({ folder: resolution, resolution: `${width}x${height}`, data: resizedData });
 
-                            // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
-                            imagesLoaded++;
-                            if (imagesLoaded === totalImages) {
-                                createZip(imagesData);
-                            }
-                        }
-                    };
+                    for (const resolution of selectedResolutions) {
+                        const [width, height] = resolutionToSize(resolution);
+                        const resizedData = await resizeImage(image, width);
+                        imagesData.push({ folder: resolution, resolution: `${width}x${height}`, data: resizedData });
+                    }
+
+                    // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
+                    if (imagesData.length === files.length * selectedResolutions.length) {
+                        createZip(imagesData);
+                    }
                 };
                 reader.readAsDataURL(file);
             }
