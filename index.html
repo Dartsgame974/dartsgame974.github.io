@@ -3,6 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Redimensionnement d'Images et Création d'un Fichier Zip</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a; /* Couleur de fond en mode sombre */
+            color: #ffffff; /* Couleur du texte en mode sombre */
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+        }
+
+        p {
+            margin: 5px 0;
+            color: #ffffff; /* Couleur du texte en mode sombre */
+        }
+
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff; /* Couleur du bouton en mode sombre */
+            color: #ffffff; /* Couleur du texte du bouton en mode sombre */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Couleur du bouton en mode sombre lors du survol */
+        }
+    </style>
 </head>
 <body>
     <h1>Redimensionnement d'Images</h1>
@@ -103,6 +147,7 @@
 
         // Attache l'événement "click" au bouton "Redimensionner"
         document.getElementById('resizeButton').addEventListener('click', onResizeButtonClick);
+    </script>
     </script>
 </body>
 </html>
