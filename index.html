@@ -23,7 +23,6 @@
 
     <!-- JavaScript code -->
     <script>
-        // Function to handle file selection
         function resizeImages() {
             const selectedOption = document.getElementById("resizeOption").value;
             const files = document.getElementById("fileInput").files;
@@ -54,12 +53,12 @@
 
                 // Save the zip with the appropriate name
                 zip.generateAsync({ type: "blob" }).then(function (content) {
-                    saveAs(content, `${selectedOption}_${size}.zip`);
+                    const zipFileName = `${selectedOption}_${size}.zip`;
+                    saveAs(content, zipFileName);
                 });
             }
         }
 
-        // Function to get the size from the file name
         function getSize(fileName) {
             const regex = /(\d+)x(\d+)/;
             const match = fileName.match(regex);
@@ -69,6 +68,10 @@
             return "unknown";
         }
     </script>
+
+    <!-- Include JSZip and FileSaver.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
 </body>
 
 </html>
