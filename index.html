@@ -34,24 +34,25 @@
     </label>
     <br>
     <button id="resizeButton">Redimensionner</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script>
         // Fonction pour redimensionner une image dans une résolution spécifiée
-        function resizeImage(image, resolution, originalFileName) {
+        function resizeImage(image, resolution) {
             const canvas = document.createElement('canvas');
             canvas.width = resolution;
             canvas.height = resolution;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(image, 0, 0, resolution, resolution);
-            const extension = originalFileName.split('.').pop().toLowerCase();
-            const newFileName = `${originalFileName}_${resolution}.${extension}`;
-            return { dataURL: canvas.toDataURL(`image/${extension}`, 1.0), fileName: newFileName };
+            return canvas.toDataURL('image/jpeg', 1.0);
         }
 
         // Fonction pour créer un fichier zip à partir des images redimensionnées
         function createZip(imagesData) {
             const zip = new JSZip();
             imagesData.forEach((imageData, index) => {
-                zip.file(imageData.fileName, imageData.dataURL.split(',')[1], { base64: true });
+                const fileName = `image_${index + 1}_${imageData.resolution}.jpg`;
+                zip.file(fileName, imageData.data.split(',')[1], { base64: true });
             });
             zip.generateAsync({ type: 'blob' }).then((content) => {
                 saveAs(content, 'images_resized.zip');
@@ -61,7 +62,10 @@
         // Fonction appelée lorsque le bouton "Redimensionner" est cliqué
         function onResizeButtonClick() {
             const selectedResolutions = Array.from(document.querySelectorAll('input[name="resolutions"]:checked'))
-                .map(input => input.value);
+                .map(input => {
+                    const [width, height] = input.value.split('x').map(Number);
+                    return { resolution: input.value, width, height };
+                });
 
             const files = document.getElementById('fileInput').files;
             if (files.length === 0 || selectedResolutions.length === 0) {
@@ -80,12 +84,11 @@
                     const image = new Image();
                     image.src = event.target.result;
                     image.onload = function() {
-                        const originalFileName = file.name.split('.')[0];
                         // Boucle pour redimensionner l'image pour chaque résolution choisie
-                        for (const resolution of selectedResolutions) {
-                            const [width, height] = resolution.split('x').map(Number);
-                            const resizedData = resizeImage(image, width, originalFileName);
-                            imagesData.push(resizedData);
+                        for (const resolutionObj of selectedResolutions) {
+                            const { resolution, width } = resolutionObj;
+                            const resizedData = resizeImage(image, width);
+                            imagesData.push({ data: resizedData, resolution });
                         }
 
                         // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
