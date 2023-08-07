@@ -1,173 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Redimensionnement d'Images et Création d'un Fichier Zip</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-    <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #1a1a1a; /* Couleur de fond en mode sombre */
-            color: #ffffff; /* Couleur du texte en mode sombre */
-        }
+  <meta charset="UTF-8">
+  <title>Redimensionneur d'images</title>
 
-        h1 {
-            text-align: center;
-            padding: 20px;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 
-        input[type="file"] {
-            margin: 10px 0;
-        }
-
-        p {
-            margin: 5px 0;
-            color: #ffffff; /* Couleur du texte en mode sombre */
-        }
-
-        label {
-            display: block;
-            margin: 5px 0;
-        }
-
-        #previewContainer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .previewImage {
-            max-width: 150px;
-            margin: 5px;
-        }
-
-        button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007bff; /* Couleur du bouton en mode sombre */
-            color: #ffffff; /* Couleur du texte du bouton en mode sombre */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3; /* Couleur du bouton en mode sombre lors du survol */
-        }
-    </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <h1>Redimensionnement d'Images</h1>
-    <input type="file" id="fileInput" multiple>
-    <br>
-    <p>Sélectionnez les résolutions :</p>
-    <label>
-        <input type="checkbox" name="resolutions" value="72x72">Twitch 72x72
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="36x36">Twitch 36x36
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="18x18">Twitch 18x18
-    </label>
-    <br>
-    <label>
-        <input type="checkbox" name="resolutions" value="256x256">Discord 256x256
-    </label>
-    <br>
-    <label>
-        <input type="checkbox" name="resolutions" value="28x28">Points de chaîne 28x28
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="56x56">Points de chaîne 56x56
-    </label>
-    <label>
-        <input type="checkbox" name="resolutions" value="112x112">Points de chaîne 112x112
-    </label>
-    <br>
-    <button id="resizeButton">Redimensionner</button>
-    <div id="previewContainer"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script>
-        // Fonction pour redimensionner une image dans une résolution spécifiée
-        function resizeImage(image, resolution) {
-            const canvas = document.createElement('canvas');
-            canvas.width = resolution;
-            canvas.height = resolution;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(image, 0, 0, resolution, resolution);
-            return canvas.toDataURL('image/jpeg', 1.0);
-        }
 
-        // Fonction pour créer un fichier zip à partir des images redimensionnées
-        function createZip(imagesData) {
-            const zip = new JSZip();
-            imagesData.forEach((imageData, index) => {
-                const fileName = `image_${index + 1}_${imageData.resolution}.jpg`;
-                zip.file(fileName, imageData.data.split(',')[1], { base64: true });
-            });
-            zip.generateAsync({ type: 'blob' }).then((content) => {
-                saveAs(content, 'images_resized.zip');
-            });
-        }
+  <h1>Redimensionneur d'images</h1>
 
-        // Fonction appelée lorsque le bouton "Redimensionner" est cliqué
-        function onResizeButtonClick() {
-            const selectedResolutions = Array.from(document.querySelectorAll('input[name="resolutions"]:checked'))
-                .map(input => {
-                    const [width, height] = input.value.split('x').map(Number);
-                    return { resolution: input.value, width, height };
-                });
+  <div class="upload">
+    <label for="upload">Sélectionner des images à redimensionner:</label>
+    <input type="file" id="upload" multiple>
+  </div>
 
-            const files = document.getElementById('fileInput').files;
-            if (files.length === 0 || selectedResolutions.length === 0) {
-                alert('Veuillez sélectionner au moins un fichier et une résolution.');
-                return;
-            }
+  <div class="previews"></div>
 
-            const imagesData = [];
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = ''; // Effacer les miniatures précédentes
+  <div class="options">
+    <div>
+      <input type="checkbox" id="twitch" value="twitch">
+      <label for="twitch">Twitch (72x72, 36x36, 18x18)</label>
+    </div>
 
-            // Boucle pour traiter chaque fichier sélectionné
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
+    <div>
+      <input type="checkbox" id="discord" value="discord">
+      <label for="discord">Discord (256x256)</label> 
+    </div>
 
-                reader.onload = function(event) {
-                    const image = new Image();
-                    image.src = event.target.result;
-                    image.onload = function() {
-                        // Boucle pour redimensionner l'image pour chaque résolution choisie
-                        for (const resolutionObj of selectedResolutions) {
-                            const { resolution, width } = resolutionObj;
-                            const resizedData = resizeImage(image, width);
-                            imagesData.push({ data: resizedData, resolution });
-                        }
+    <div>
+      <input type="checkbox" id="moji" value="moji">
+      <label for="moji">Points de chaîne (28x28, 56x56, 112x112)</label>
+    </div>
+  </div>
 
-                        // Vérifie si toutes les images ont été redimensionnées avant de créer le zip
-                        if (imagesData.length === files.length * selectedResolutions.length) {
-                            createZip(imagesData);
-                        }
-                    };
-                };
+  <button id="resize">Redimensionner</button>
 
-                // Prévisualisation de l'image chargée
-                const previewImage = document.createElement('img');
-                previewImage.classList.add('previewImage');
-                previewImage.src = URL.createObjectURL(file);
-                previewContainer.appendChild(previewImage);
+  <script src="script.js"></script>
 
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Attache l'événement "click" au bouton "Redimensionner"
-        document.getElementById('resizeButton').addEventListener('click', onResizeButtonClick);
-    </script>
 </body>
 </html>
