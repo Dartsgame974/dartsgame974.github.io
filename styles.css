@@ -1,50 +1,27 @@
-/* Styles */
-
 body {
-  font-family: 'Montserrat', sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
-}
-
-h1 {
-  text-align: center;
-  margin-top: 50px;
-}
-
-.upload, 
-.options {
-  max-width: 500px;
-  margin: 0 auto 50px;
-}
-
-/* Dark mode */
-
-body.dark {
   background-color: #121212;
   color: #fff;
+  font-family: sans-serif;
 }
 
-body.dark button {
-  background-color: #fff;
-  color: #121212;
-}
-
-/* Styles */
-
-body {
-  /* Mode sombre */
-  background-color: #121212; 
-  color: #fff;
+.box {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #1a1a1a;
+  border-radius: 10px;  
 }
 
 button {
   background-color: #fff;
   color: #121212;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-/* Miniatures centrées 64x64 */
 .previews {
-  display: flex;
+  display: flex;  
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -54,14 +31,11 @@ button {
   height: 64px;
   object-fit: cover;
   margin: 10px;
+  position: relative;
 }
 
-/* Autres éléments centrés */
-.upload,
-.options {
-  margin: 0 auto 50px;
-}
-
-h1 {
-  text-align: center;
+.preview button {
+  position: absolute;
+  top: -10px;
+  right: -10px; 
 }
