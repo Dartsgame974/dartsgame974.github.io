@@ -29,4 +29,39 @@ body.dark button {
   color: #121212;
 }
 
-/* etc */
+/* Styles */
+
+body {
+  /* Mode sombre */
+  background-color: #121212; 
+  color: #fff;
+}
+
+button {
+  background-color: #fff;
+  color: #121212;
+}
+
+/* Miniatures centrées 64x64 */
+.previews {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.preview {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  margin: 10px;
+}
+
+/* Autres éléments centrés */
+.upload,
+.options {
+  margin: 0 auto 50px;
+}
+
+h1 {
+  text-align: center;
+}
