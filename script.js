@@ -29,16 +29,6 @@ function extractTracks(tracks) {
     return tracks.map((track) => track.name);
 }
 
-function extractArtists(tracks) {
-    const artists = new Set();
-    for (const track of tracks) {
-        for (const artist of track.track.artists) {
-            artists.add(artist.name);
-        }
-    }
-    return Array.from(artists);
-}
-
 function findCommonElements(arr1, arr2) {
     return arr1.filter((element) => arr2.includes(element));
 }
