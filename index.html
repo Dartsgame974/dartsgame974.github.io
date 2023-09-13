@@ -1,75 +1,18 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Comparaison de playlists Spotify</title>
-    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <title>Comparaison de Playlists Spotify</title>
 </head>
 <body>
-    <h1>Résultats de la comparaison de playlists</h1>
-    <py-script>
-import subprocess
-
-# Installer spotipy automatiquement
-subprocess.run(["pip", "install", "spotipy"])
-
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-
-# Remplacez ces valeurs par vos propres clés d'API
-client_id = '648744c559e34f23bf849613c3b0f4ca'
-client_secret = '6108e70bad3a4cf5bb28dab7ada44a5d'
-
-# Créez une instance Spotipy en utilisant vos clés d'API
-client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-
-# Entrez les liens des deux playlists Spotify
-playlist1_url = input("Entrez le lien de la première playlist: ")
-playlist2_url = input("Entrez le lien de la deuxième playlist: ")
-
-# Fonction pour extraire les titres et les artistes d'une playlist
-def extract_playlist_info(playlist_url):
-    titles = set()
-    artists = set()
-    offset = 0
-    limit = 100
-
-    while True:
-        results = sp.playlist_tracks(playlist_url, offset=offset, limit=limit)
-        
-        for track in results['items']:
-            title = track['track']['name']
-            artist = track['track']['artists'][0]['name']
-            titles.add(title)
-            artists.add(artist)
-
-        if len(results['items']) < limit:
-            break
-        
-        offset += limit
-
-    return titles, artists
-
-# Extraire les informations des deux playlists
-titles1, artists1 = extract_playlist_info(playlist1_url)
-titles2, artists2 = extract_playlist_info(playlist2_url)
-
-# Comparez les titres communs
-common_titles = titles1.intersection(titles2)
-
-# Comparez les artistes communs
-common_artists = artists1.intersection(artists2)
-
-# Affichez les titres communs
-print("Titres communs:")
-for title in common_titles:
-    print(title)
-
-# Affichez les artistes communs
-print("\nArtistes communs:")
-for artist in common_artists:
-    print(artist)
-    </py-script>
+    <h1>Comparaison de Playlists Spotify</h1>
+    <form action="/compare" method="post">
+        <label for="playlist1">URL de la première playlist Spotify:</label>
+        <input type="text" id="playlist1" name="playlist1" required>
+        <br>
+        <label for="playlist2">URL de la deuxième playlist Spotify:</label>
+        <input type="text" id="playlist2" name="playlist2" required>
+        <br>
+        <input type="submit" value="Comparer">
+    </form>
 </body>
 </html>
