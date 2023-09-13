@@ -1,146 +1,82 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+// Function to compare two Spotify playlists
+async function comparePlaylists() {
+    const playlist1Link = document.getElementById('playlist1').value;
+    const playlist2Link = document.getElementById('playlist2').value;
 
-const upload = document.getElementById('upload');
-const previews = document.querySelector('.previews');
-const resizeBtn = document.getElementById('resize');
+    // Obtain access tokens for Spotify API (you'll need to implement the authentication flow)
+    const accessToken = '6108e70bad3a4cf5bb28dab7ada44a5d';
 
-const sizes = {
-  twitch: [72, 36, 18],
-  discord: [256],
-  moji: [28, 56, 112]
-};
+    // Get playlist data using the Spotify API
+    const playlist1 = await getPlaylistData(playlist1Link, accessToken);
+    const playlist2 = await getPlaylistData(playlist2Link, accessToken);
 
-upload.addEventListener('change', () => {
+    // Extract track names and artists from playlists
+    const tracks1 = extractTracks(playlist1);
+    const tracks2 = extractTracks(playlist2);
 
-  previews.innerHTML = '';
+    // Find common tracks and artists
+    const commonTracks = findCommonElements(tracks1, tracks2);
+    const commonArtists = findCommonElements(playlist1.artists, playlist2.artists);
 
-  const files = upload.files;
-
-  for(let i = 0; i < files.length; i++) {
-
-    const file = files[i];
-    
-    const img = document.createElement('img');
-    img.src = URL.createObjectURL(file);
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.innerText = 'X';
-
-    deleteBtn.addEventListener('click', () => {
-      previews.removeChild(img);
-      previews.removeChild(deleteBtn);
-    });
-
-    previews.appendChild(img);
-    previews.appendChild(deleteBtn);
-
-  }
-
-});
-
-
-resizeBtn.addEventListener('click', () => {
-
-  previews.innerHTML = '';
-
-  const options = getCheckedOptions();
-
-  zipImages(upload.files, options);
-
-});
-
-
-function getCheckedOptions() {
-
-  const checked = [];
-
-  if (twitch.checked) {
-    checked.push({
-      name: 'twitch',
-      sizes: sizes.twitch
-    });
-  }
-
-  if (discord.checked) {
-    checked.push({
-      name: 'discord',
-      sizes: sizes.discord 
-    });
-  }
-
-  if (moji.checked) {
-    checked.push({
-      name: 'moji',
-      sizes: sizes.moji
-    });
-  }
-
-  return checked;
-
+    // Display common tracks and artists in the HTML
+    displayResults(commonTracks, commonArtists);
 }
 
-async function zipImages(files, options) {
-
-  const zip = new JSZip();
-
-  for (let i = 0; i < files.length; i++) {
-
-    const file = files[i];
-    const img = await getImage(file);
-    const fileName = file.name;
-
-    options.forEach(option => {
-
-      const sizes = option.sizes;
-
-      sizes.forEach(size => {
-
-        const resizedImg = getResizedImage(img, size, size);
-
-        const resizedName = `${fileName}_${option.name}_${size}x${size}.jpg`;
-
-        zip.file(resizedName, resizedImg, {base64: true});
-
-      });
-
+// Function to retrieve playlist data from Spotify API
+async function getPlaylistData(playlistLink, accessToken) {
+    const playlistId = extractPlaylistId(playlistLink);
+    const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
     });
-
-  }
-
-  const zipFile = await zip.generateAsync({type: 'blob'});
-
-  saveAs(zipFile, 'images.zip');
-
+    const data = await response.json();
+    return {
+        name: data.name,
+        artists: extractArtists(data.tracks.items),
+    };
 }
 
+// Function to extract track names from a playlist
+function extractTracks(playlist) {
+    return playlist.tracks.map((track) => track.name);
+}
 
-function getImage(file) {
-
-  return new Promise(resolve => {
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const img = new Image();
-      img.src = reader.result;
-      resolve(img);
+// Function to extract artist names from a list of tracks
+function extractArtists(tracks) {
+    const artists = new Set();
+    for (const track of tracks) {
+        for (const artist of track.track.artists) {
+            artists.add(artist.name);
+        }
     }
-
-  });
-
+    return Array.from(artists);
 }
 
-
-function getResizedImage(img, width, height) {
-
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0, width, height);
-
-  return canvas.toDataURL();
-
+// Function to find common elements in two arrays
+function findCommonElements(arr1, arr2) {
+    return arr1.filter((element) => arr2.includes(element));
 }
+
+// Function to display common tracks and artists in the HTML
+function displayResults(commonTracks, commonArtists) {
+    const commonTracksList = document.getElementById('commonTracks');
+    const commonArtistsList = document.getElementById('commonArtists');
+    
+    commonTracksList.innerHTML = '';
+    commonArtistsList.innerHTML = '';
+    
+    commonTracks.forEach((track) => {
+        const li = document.createElement('li');
+        li.textContent = track;
+        commonTracksList.appendChild(li);
+    });
+    
+    commonArtists.forEach((artist) => {
+        const li = document.createElement('li');
+        li.textContent = artist;
+        commonArtistsList.appendChild(li);
+    });
+}
+
+document.getElementById('compareButton').addEventListener('click', comparePlaylists);
