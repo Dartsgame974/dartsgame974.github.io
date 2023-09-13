@@ -1,0 +1,10 @@
+{
+  "name": "spotify-playlist-analyzer",
+  "version": "1.0.0",
+  "description": "Analyze common tracks and artists between two Spotify playlists",
+  "main": "app.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1"
+  }
+}
