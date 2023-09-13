@@ -8,6 +8,11 @@
 <body>
     <h1>Résultats de la comparaison de playlists</h1>
     <py-script>
+import subprocess
+
+# Installer spotipy automatiquement
+subprocess.run(["pip", "install", "spotipy"])
+
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
