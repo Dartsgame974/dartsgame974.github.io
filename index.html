@@ -9,7 +9,7 @@
     <h1>Comparateur de Playlists Spotify</h1>
     
     <!-- Formulaire pour entrer les liens des playlists -->
-    <form id="playlist-form">
+    <form>
         <label for="playlist1">Entrez le lien de la première playlist: </label>
         <input type="text" id="playlist1" required><br>
         <label for="playlist2">Entrez le lien de la deuxième playlist: </label>
@@ -17,12 +17,9 @@
         <button type="button" onclick="comparePlaylists()">Comparer</button>
     </form>
 
-    <!-- Affichage des titres et artistes communs -->
+    <!-- Affichage des titres communs -->
     <h2>Titres communs:</h2>
     <ul id="common-titles"></ul>
-    
-    <h2>Artistes communs:</h2>
-    <ul id="common-artists"></ul>
 
     <!-- Script JavaScript -->
     <script src="script.js"></script>
