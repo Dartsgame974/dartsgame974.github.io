@@ -2,15 +2,14 @@
 const client_id = '648744c559e34f23bf849613c3b0f4ca';
 const client_secret = '6108e70bad3a4cf5bb28dab7ada44a5d';
 
-// Créez une instance Spotipy en utilisant vos clés d'API
-const client_credentials_manager = new SpotifyClientCredentials({
-    clientId: client_id,
-    clientSecret: client_secret
-});
-const sp = new SpotifyWebApi({ clientCredentialsManager: client_credentials_manager });
-
 // Fonction pour extraire les titres et les artistes d'une playlist
 async function extractPlaylistInfo(playlistUrl) {
+    const client_credentials_manager = new SpotifyClientCredentials({
+        clientId: client_id,
+        clientSecret: client_secret
+    });
+    const sp = new SpotifyWebApi({ clientCredentialsManager: client_credentials_manager });
+
     const titles = new Set();
     const artists = new Set();
     let offset = 0;
