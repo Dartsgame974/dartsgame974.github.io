@@ -1,52 +1,31 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-<meta charset="UTF-8">
-<title>Redimensionneur d'images</title>
-
-<link rel="stylesheet" href="styles.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparateur de Playlists Spotify</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 </head>
-
-<body>
-
-<div class="box">
-
-<h1>Redimensionneur d'images</h1>
-
-<div class="upload">
-  <label for="upload">Sélectionner des images à redimensionner :</label>
-  <input type="file" id="upload" multiple>
-</div>
-
-<div class="previews"></div>  
-
-<div class="options">
-
-  <div>
-    <input type="checkbox" id="twitch" value="twitch">
-    <label for="twitch">Twitch (72x72, 36x36, 18x18)</label>
-  </div>
-
-  <div>
-    <input type="checkbox" id="discord" value="discord">
-    <label for="discord">Discord (256x256)</label>
-  </div>
-
-  <div>
-    <input type="checkbox" id="moji" value="moji">
-    <label for="moji">Points de chaîne (28x28, 56x56, 112x112)</label>
-  </div>
-
-</div>
-
-<button id="resize">Redimensionner</button>
-
-</div>
-
-<script src="script.js"></script>
-
+<body class="dark-mode">
+    <div class="container">
+        <h1>Comparateur de Playlists Spotify</h1>
+        <div class="input-container">
+            <label for="playlist1">Playlist 1:</label>
+            <input type="text" id="playlist1" placeholder="Entrez le lien de la playlist 1">
+        </div>
+        <div class="input-container">
+            <label for="playlist2">Playlist 2:</label>
+            <input type="text" id="playlist2" placeholder="Entrez le lien de la playlist 2">
+        </div>
+        <button id="compareButton">Comparer</button>
+        <div class="results">
+            <h2>Titres communs:</h2>
+            <ul id="commonTracks"></ul>
+            <h2>Artistes communs:</h2>
+            <ul id="commonArtists"></ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
-
 </html>
