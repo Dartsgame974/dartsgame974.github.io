@@ -2,33 +2,23 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comparateur de Playlists Spotify</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 </head>
-<body class="dark-mode">
-    <div class="container">
-        <h1>Comparateur de Playlists Spotify</h1>
-        <div class="input-container">
-            <label for="playlist1">Playlist 1:</label>
-            <input type="text" id="playlist1" placeholder="Entrez le lien de la playlist 1">
-        </div>
-        <div class="input-container">
-            <label for="playlist2">Playlist 2:</label>
-            <input type="text" id="playlist2" placeholder="Entrez le lien de la playlist 2">
-        </div>
-        <button id="compareButton">Comparer</button>
-        <div class="results">
-            <h2>Titres communs:</h2>
-            <ul id="commonTracks"></ul>
-            <h2>Artistes communs:</h2>
-            <ul id="commonArtists"></ul>
-        </div>
+<body>
+    <h1>Comparateur de Playlists Spotify</h1>
+    <div>
+        <label for="playlist1">Playlist 1:</label>
+        <input type="text" id="playlist1" placeholder="Entrez le lien de la playlist 1">
     </div>
+    <div>
+        <label for="playlist2">Playlist 2:</label>
+        <input type="text" id="playlist2" placeholder="Entrez le lien de la playlist 2">
+    </div>
+    <button id="compareButton">Comparer</button>
+    <h2>Titres communs:</h2>
+    <ul id="commonTracks"></ul>
+    <h2>Artistes communs:</h2>
+    <ul id="commonArtists"></ul>
     <script src="script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/spotify-web-api-js"></script>
 </body>
 </html>
-
-
