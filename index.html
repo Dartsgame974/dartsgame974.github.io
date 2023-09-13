@@ -1,18 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Comparaison de Playlists Spotify</title>
+    <meta charset="UTF-8">
+    <title>Playlist Analyzer</title>
 </head>
 <body>
-    <h1>Comparaison de Playlists Spotify</h1>
-    <form action="/compare" method="post">
-        <label for="playlist1">URL de la première playlist Spotify:</label>
-        <input type="text" id="playlist1" name="playlist1" required>
-        <br>
-        <label for="playlist2">URL de la deuxième playlist Spotify:</label>
-        <input type="text" id="playlist2" name="playlist2" required>
-        <br>
-        <input type="submit" value="Comparer">
+    <h1>Playlist Analyzer</h1>
+    <form id="playlist-form">
+        <label for="playlist1">Enter Playlist 1 URL:</label>
+        <input type="text" id="playlist1" required><br>
+        <label for="playlist2">Enter Playlist 2 URL:</label>
+        <input type="text" id="playlist2" required><br>
+        <button type="button" id="analyze-button">Analyze Playlists</button>
     </form>
+    <h2>Common Tracks:</h2>
+    <ul id="common-tracks-list"></ul>
+    <h2>Common Artists:</h2>
+    <ul id="common-artists-list"></ul>
+
+    <script src="app.js"></script>
 </body>
 </html>
