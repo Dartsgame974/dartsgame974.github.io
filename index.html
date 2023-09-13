@@ -1,23 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Playlist Analyzer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparateur de Playlists Spotify</title>
 </head>
 <body>
-    <h1>Playlist Analyzer</h1>
+    <h1>Comparateur de Playlists Spotify</h1>
+    
+    <!-- Formulaire pour entrer les liens des playlists -->
     <form id="playlist-form">
-        <label for="playlist1">Enter Playlist 1 URL:</label>
+        <label for="playlist1">Entrez le lien de la première playlist: </label>
         <input type="text" id="playlist1" required><br>
-        <label for="playlist2">Enter Playlist 2 URL:</label>
+        <label for="playlist2">Entrez le lien de la deuxième playlist: </label>
         <input type="text" id="playlist2" required><br>
-        <button type="button" id="analyze-button">Analyze Playlists</button>
+        <button type="button" onclick="comparePlaylists()">Comparer</button>
     </form>
-    <h2>Common Tracks:</h2>
-    <ul id="common-tracks-list"></ul>
-    <h2>Common Artists:</h2>
-    <ul id="common-artists-list"></ul>
 
-    <script src="app.js"></script>
+    <!-- Affichage des titres et artistes communs -->
+    <h2>Titres communs:</h2>
+    <ul id="common-titles"></ul>
+    
+    <h2>Artistes communs:</h2>
+    <ul id="common-artists"></ul>
+
+    <!-- Script JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
