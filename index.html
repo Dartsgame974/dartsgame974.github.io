@@ -3,25 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comparateur de Playlists Spotify</title>
+    <title>Télécharger l'animation du logo</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #444;
+            padding: 20px;
+            border: 2px solid #555;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #00bcd4;
+        }
+
+        button {
+            background-color: #00bcd4;
+            color: #fff;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #009688;
+        }
+    </style>
 </head>
 <body>
-    <h1>Comparateur de Playlists Spotify</h1>
-    
-    <!-- Formulaire pour entrer les liens des playlists -->
-    <form>
-        <label for="playlist1">Entrez le lien de la première playlist: </label>
-        <input type="text" id="playlist1" required><br>
-        <label for="playlist2">Entrez le lien de la deuxième playlist: </label>
-        <input type="text" id="playlist2" required><br>
-        <button type="button" onclick="comparePlaylists()">Comparer</button>
-    </form>
+    <div class="container">
+        <h1>Télécharger l'animation du logo</h1>
+        <h2>Des boutons radio</h2>
+        <label>
+            <input type="radio" name="donation" value="1"> Je veux faire un don de 1 euro via PayPal
+        </label>
+        <br>
+        <label>
+            <input type="radio" name="donation" value="0"> Je ne souhaite pas faire de don
+        </label>
+        
+        <button id="downloadBtn" style="display: none;">Télécharger</button>
+        <br>
 
-    <!-- Affichage des titres communs -->
-    <h2>Titres communs:</h2>
-    <ul id="common-titles"></ul>
+        <script>
+            const donationRadio = document.getElementsByName('donation');
+            const downloadBtn = document.getElementById('downloadBtn');
 
-    <!-- Script JavaScript -->
-    <script src="script.js"></script>
+            donationRadio.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === '0') {
+                        downloadBtn.style.display = 'block';
+                    } else {
+                        downloadBtn.style.display = 'none';
+                        alert("Veuillez demander à Dartsgame sur Discord en MP pour faire un don.");
+                        // Vous devrez ajouter ici la logique pour contacter Dartsgame sur Discord en MP.
+                    }
+                });
+            });
+        </script>
+    </div>
 </body>
 </html>
